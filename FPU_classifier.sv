@@ -62,44 +62,5 @@ assign f_num_class[9] =         expAllOne                 & ~mantissaZero & d1;
 assign f_num_class[31:10] = 21'b0; 
 
 assign out_debug = fclass_enum'(f_num_class);
-// always_comb begin 
-//     f_num_class[8:0] = 8'h0; 
-    
-//     if(sign)begin 
-//         // covers if exponent is all 1 and sign is 1
-//         if(exponent == 8'hFF)begin 
-//             f_num_class = (mantissa == 25'h0) ? SNAN : N_INF; 
-//         end
-//         // covers if exponent is NOT all 1 and sign is 1 
-//         else begin
-//             // covers case of sign 1 , exponent not all 1, and exponent is not all 0 
-//             if(exponent != 8'h0)begin 
-//                 f_num_class = N_NORMAL; 
-//                 // covers the two alt cases that exponent is all 0
-//                 else begin 
-//                     f_num_class = (mantissa == 25'h0 ) ? N_SUBNORMAL : N_ZERO; 
-//                 end
-//             end 
-//         end   
-//     end 
-//     // other cases where sign is not 0, basically opposite as above
-//     else if(~sign)begin 
-//         if(exponent == 8'hFF)begin 
-//             // check for QNan
-//             f_num_class = (mantissa == 25'h0) ? QNAN : P_INF; 
-//         end 
-//         // covers if exponent is NOT all 1 and sign is 1 
-//         else begin
-//             // covers case of sign 1 , exponent not all 1, and exponent is not all 0 
-//             if(exponent != 8'h0)begin 
-//                 f_num_class = P_NORMAL; 
-//                 // covers the two alt cases that exponent is all 0
-//                 else begin 
-//                     f_num_class = (mantissa == 25'h0 ) ? P_SUBNORMAL : P_ZERO; 
-//                 end
-//             end 
-//         end    
-//     end 
-// end 
 
 endmodule 
