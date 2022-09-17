@@ -14,12 +14,7 @@
 // 8 - sNaN
 // 9 - qNaN
 
-module FPU_C(
-    input logic [31:0] f_num,
-    output logic [31:0] f_num_class
-); 
-
-
+package FPU_class_types; 
 typedef enum {
     N_INF = 10'b0000000001, 
     N_NORMAL= 10'b0000000010, 
@@ -32,6 +27,14 @@ typedef enum {
     SNAN = 10'b0100000000,
     QNAN = 10'b1000000000
 } fclass_enum; 
+endpackage
+
+module FPU_classifer(
+    input logic [31:0] f_num,
+    output logic [31:0] f_num_class
+); 
+
+
 
 logic sign; 
 logic [7:0] exponent; 
