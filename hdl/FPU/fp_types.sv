@@ -1,4 +1,5 @@
 package fp_types;
+localparam PRECISION = 3
 
 struct packed{
     logic sign_bit;
@@ -9,7 +10,7 @@ struct packed{
 struct packed{
     logic sign_bit;
     logic[7:0] exp;
-    logic [24:0] mant;
+    logic [22 + PRECISION:0] mant;
 }IEEE_extended_fp; //more prceision so we can round later, can add more bits later if needed
 
 typedef union packed{

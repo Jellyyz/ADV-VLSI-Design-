@@ -9,7 +9,7 @@ module fp_normalize(
 
 );
 
-normalized_x2.mant = x2.mant>>shamt;
+normalized_x2.mant = {1'b1, x2.mant}>>shamt;
 normalized_x2.exp = x2.exp;
 
 
