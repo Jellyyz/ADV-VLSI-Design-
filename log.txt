@@ -1,0 +1,35 @@
+mkdir -p sim
+cd sim && vcs -R /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/sim_ver/DW_sqrt_function.inc /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/sim_ver/DW_fp_sqrt.v /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/FPU_sqrt.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/integer_add_sub.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/twos_comp.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/fpu_add_sub.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/fp_normalize.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/FPU_compare.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/integer_divider.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/FPU_top.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/fp_exponent_compare.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/FPU_classifier.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/fp_types.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/integer_multiplier.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/FPU/fp_switch.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hvl/testbenches/FPU/float_to_IEEE.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hvl/testbenches/FPU/rand_float_gen.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hvl/testbenches/FPU/IEEE_to_float.sv /home/ghuang23/Desktop/ADV-VLSI-Design-/hvl/testbenches/FPU/sqrt_test.sv -full64 -sv=2012 +lint=all,noSVA-UA,noNS,noSVA-AECASR,noSVA-FINUA -timescale=1ns/10ps -debug_acc+all -kdb -fsdb +v2k 
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'AlmaLinux release 8.6 (Sky Tiger)' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '4.18.0-372.19.1.el8_6.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+      Version R-2020.12-SP1-1_Full64 -- Thu Oct  6 10:52:18 2022
+
+                    Copyright (c) 1991 - 2021 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+            or distribution of this software is strictly prohibited.
+
+Parsing design file '/home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/sim_ver/DW_sqrt_function.inc'
+Parsing design file '/home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/sim_ver/DW_fp_sqrt.v'
+
+Error-[SFCOR] Source file cannot be opened
+  Source file "DW_sqrt_function.inc" cannot be opened for reading due to 'No 
+  such file or directory'.
+  Please fix above issue and compile again.
+  "/home/ghuang23/Desktop/ADV-VLSI-Design-/hdl/sim_ver/DW_fp_sqrt.v", 222
+  Source info:   `include "DW_sqrt_function.inc"
+
+1 error
+CPU time: .166 seconds to compile

@@ -1,6 +1,6 @@
 // This component is taken from designware 
 
-module DW_fp_sqrt_inst( inst_a, inst_rnd, z_inst, status_inst );
+module DW_fp_sqrt_inst( inst_a, inst_rnd, z_inst, status_inst);
 parameter inst_sig_width = 23;
 parameter inst_exp_width = 8;
 parameter inst_ieee_compliance = 0;
