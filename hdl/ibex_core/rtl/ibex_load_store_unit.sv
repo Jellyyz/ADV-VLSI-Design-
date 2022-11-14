@@ -11,8 +11,8 @@
  * and to align bytes and halfwords.
  */
 
-`include "prim_assert.sv"
-`include "dv_fcov_macros.svh"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/dv_fcov_macros.svh"
 
 module ibex_load_store_unit #(
   parameter bit          MemECC       = 1'b0,

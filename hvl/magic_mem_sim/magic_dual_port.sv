@@ -3,13 +3,13 @@
  *
  */
 
+
 module magic_memory_dp
 (
     tb_itf.magic_mem itf
 );
-
-timeunit 1ns;
 timeprecision 1ns;
+timeunit 1ns;
 
 logic [7:0] mem [logic [31:0]];
 

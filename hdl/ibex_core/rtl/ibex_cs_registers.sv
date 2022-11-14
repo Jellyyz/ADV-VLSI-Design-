@@ -7,7 +7,7 @@
  * Control and Status Registers
  */
 
-`include "prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
 
 module ibex_cs_registers #(
   parameter bit               DbgTriggerEn      = 0,

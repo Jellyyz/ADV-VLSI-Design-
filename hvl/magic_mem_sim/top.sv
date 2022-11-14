@@ -1,18 +1,18 @@
-module mp4_tb;
-`timescale 1ns/10ps
 
+module swamy_tb;
+
+timeunit 1ns;
+timeprecision 1ns;
 /********************* Do not touch for proper compilation *******************/
 // Instantiate Interfaces
 tb_itf itf();
-rvfi_itf rvfi(itf.clk, itf.rst);
 
 // Instantiate Testbench
 source_tb tb(
     .magic_mem_itf(itf),
     .mem_itf(itf),
     .sm_itf(itf),
-    .tb_itf(itf),
-    .rvfi(rvfi)
+    .tb_itf(itf)
 );
 
 // For local simulation, add signal for Modelsim to display by default
@@ -24,10 +24,6 @@ bit f;
 /************************ Signals necessary for monitor **********************/
 // This section not required until CP2
 
-assign rvfi.commit = 0; // Set high when a valid instruction is modifying regfile or PC
-assign rvfi.halt = 0;   // Set high when you detect an infinite loop
-initial rvfi.order = 0;
-always @(posedge itf.clk iff rvfi.commit) rvfi.order <= rvfi.order + 1; // Modify for OoO
 
 /*
 The following signals need to be set:
@@ -147,10 +143,10 @@ ibex_top #(
     .instr_err_i            ('b0),
 
     // Data memory interface
-    .data_req_o             (itf.data_req),
+    .data_req_o             (itf.data_read),
     .data_gnt_i             (itf.data_resp),
     .data_rvalid_i          (itf.data_resp),
-    .data_we_o              (itf.data_wen),
+    .data_we_o              (itf.data_write),
     .data_be_o              (itf.data_mbe),
     .data_addr_o            (itf.data_addr),
     .data_wdata_o           (itf.data_wdata),
@@ -177,7 +173,15 @@ ibex_top #(
     .alert_minor_o          (),
     .alert_major_internal_o (),
     .alert_major_bus_o      (),
-    .core_sleep_o           ()
+    .core_sleep_o           (),
+    .double_fault_seen_o    (),
+
+    // scramble 
+    .scramble_key_valid_i   ('0),
+    .scramble_key_i         ('0),
+    .scramble_nonce_i       ('0),
+    .scramble_req_o         ()
+
 );
 /***************************** End Instantiation *****************************/
 

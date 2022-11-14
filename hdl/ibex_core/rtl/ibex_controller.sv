@@ -7,8 +7,8 @@
  * Main controller of the processor
  */
 
-`include "prim_assert.sv"
-`include "dv_fcov_macros.svh"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/dv_fcov_macros.svh"
 
 module ibex_controller #(
   parameter bit WritebackStage  = 1'b0,

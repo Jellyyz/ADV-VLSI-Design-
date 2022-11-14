@@ -15,7 +15,7 @@
  * The predictor is entirely combinational but takes clk/rst_n signals for use by assertions.
  */
 
-`include "prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
 
 module ibex_branch_predict (
   input  logic clk_i,

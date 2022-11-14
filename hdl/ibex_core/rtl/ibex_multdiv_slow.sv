@@ -9,7 +9,7 @@
  * Baugh-Wooley multiplier and Long Division
  */
 
-`include "prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
 
 module ibex_multdiv_slow
 (

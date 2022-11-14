@@ -10,7 +10,7 @@
  * the read instruction.
  */
 
-`include "prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
 
 module ibex_if_stage import ibex_pkg::*; #(
   parameter int unsigned DmHaltAddr        = 32'h1A110800,

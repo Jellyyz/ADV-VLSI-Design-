@@ -1,16 +1,17 @@
 `ifndef TB_ITF_SV
 `define TB_ITF_SV
 
+
 // Change frequency for accurate timing
 `define FREQUENCY_MHZ 100.0
 `define FREQUENCY (`FREQUENCY_MHZ * 1000000)
 `define PERIOD_NS (1000000000/`FREQUENCY)
 `define PERIOD_CLK (`PERIOD_NS / 2)
 
-`timescale 1ns/1ps
-
 interface tb_itf();
 
+timeprecision 1ns;
+timeunit 1ns;
     /* Generate Clock */
     bit clk, rst;
     always #(`PERIOD_CLK) clk = clk === 1'b0;

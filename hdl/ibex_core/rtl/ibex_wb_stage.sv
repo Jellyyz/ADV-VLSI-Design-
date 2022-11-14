@@ -11,8 +11,8 @@
  * a simple passthrough to write data direct to the register file.
  */
 
-`include "prim_assert.sv"
-`include "dv_fcov_macros.svh"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/dv_fcov_macros.svh"
 
 module ibex_wb_stage #(
   parameter bit ResetAll       = 1'b0,

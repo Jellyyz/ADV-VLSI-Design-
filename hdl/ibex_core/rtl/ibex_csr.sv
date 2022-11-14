@@ -6,7 +6,7 @@
  * Control / status register primitive
  */
 
-`include "prim_assert.sv"
+`include "../hdl/ibex_core/rtl/prim/prim_assert.sv"
 
 module ibex_csr #(
   parameter int unsigned    Width      = 32,
