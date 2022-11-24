@@ -1,8 +1,6 @@
 
 module swamy_tb;
 
-timeunit 1ns;
-timeprecision 1ns;
 /********************* Do not touch for proper compilation *******************/
 // Instantiate Interfaces
 tb_itf itf();
@@ -83,6 +81,37 @@ Please refer to tb_itf.sv for more information.
 // Set this to the proper value
 assign itf.registers = '{default: '0};
 
+logic no_x_iresp;
+logic no_x_dresp;
+logic  no_x_drdata;
+
+always_comb begin
+    if(itf.inst_resp === 'x)
+        no_x_iresp = '0;
+    else
+        no_x_iresp = itf.inst_resp;
+    
+    if(itf.data_resp === 'x)
+        no_x_dresp = '0;
+    else
+        no_x_dresp = itf.data_resp;
+    
+    if(itf.data_rdata[0] === 'x)
+        no_x_drdata = '0;
+    else
+        no_x_drdata = itf.data_rdata;
+end
+
+logic [31:0] delay_drdata, delay_irdata;
+logic delay_dresp, delay_iresp;
+
+always_ff @(posedge itf.clk) begin
+    delay_iresp <= itf.inst_resp;
+    delay_irdata<=itf.inst_rdata;
+    
+    delay_drdata<=itf.data_rdata;
+    delay_dresp <= itf.data_resp;
+end
 /*********************** Instantiate your design here ************************/
 /*
 The following signals need to be connected to your top level:
@@ -100,6 +129,11 @@ Burst Memory Ports:
 
 Please refer to tb_itf.sv for more information.
 */
+
+logic data_req, write_enable;
+
+assign itf.data_read = data_req & !write_enable;
+assign itf.data_write = data_req & write_enable;
 
 ibex_top #(
     .PMPEnable        ( 0                                ),
@@ -136,22 +170,22 @@ ibex_top #(
     // Instruction memory interface
     .instr_req_o            (itf.inst_read),
     .instr_gnt_i            (itf.inst_resp),
-    .instr_rvalid_i         (itf.inst_resp),
+    .instr_rvalid_i         (delay_iresp),
     .instr_addr_o           (itf.inst_addr),
-    .instr_rdata_i          (itf.inst_rdata),
+    .instr_rdata_i          (delay_irdata),
     .instr_rdata_intg_i     ('0), //that's what a bunch of examples did, so doesn't seem too unreasonable
     .instr_err_i            ('b0),
 
     // Data memory interface
-    .data_req_o             (itf.data_read),
+    .data_req_o             (data_req),
     .data_gnt_i             (itf.data_resp),
-    .data_rvalid_i          (itf.data_resp),
-    .data_we_o              (itf.data_write),
+    .data_rvalid_i          (delay_dresp),
+    .data_we_o              (write_enable),
     .data_be_o              (itf.data_mbe),
     .data_addr_o            (itf.data_addr),
     .data_wdata_o           (itf.data_wdata),
     .data_wdata_intg_o      ('0), //the FPGA example sets this to '0, so so am I
-    .data_rdata_i           (itf.data_rdata),
+    .data_rdata_i           (delay_drdata),
     .data_rdata_intg_i      ('0), 
     .data_err_i             ('b0),
 

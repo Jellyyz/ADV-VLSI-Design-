@@ -10,11 +10,9 @@
 
 interface tb_itf();
 
-timeprecision 1ns;
-timeunit 1ns;
     /* Generate Clock */
     bit clk, rst;
-    always #(`PERIOD_CLK) clk = clk === 1'b0;
+    always #(1) clk = clk === 1'b0;
 
     /* Needed to validate correctness */
     logic [31:0] registers[32];
@@ -71,7 +69,7 @@ timeunit 1ns;
 
     /* Magic Memory */
     clocking mmcb @(negedge clk);
-        input read_a = inst_read, address_a = inst_addr, read_b = data_read,
+        input reset = rst, read_a = inst_read, address_a = inst_addr, read_b = data_read,
               write = data_write, wmask = data_mbe, address_b = data_addr,
               wdata = data_wdata;
         output resp_a = inst_resp, rdata_a = inst_rdata, resp_b = data_resp,

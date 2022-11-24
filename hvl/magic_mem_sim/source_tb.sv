@@ -19,15 +19,18 @@ module source_tb(
 );
 
 initial begin
+    $fsdbDumpfile("ibex_comp");
+    $fsdbDumpvars();
     $display("Compilation Successful");
     tb_itf.path_mb.put("memory.lst");
-    tb_itf.rst = 1'b1;
+    tb_itf.rst <= 1'b0;
     repeat (5) @(posedge tb_itf.clk);
-    tb_itf.rst = 1'b0;
+    tb_itf.rst <= 1'b1;
 end
 
 /**************************** Halting Conditions *****************************/
-int timeout = 10000;
+int timeout = 1000000;
+
 
 always @(posedge tb_itf.clk) begin
     if (timeout == 0) begin

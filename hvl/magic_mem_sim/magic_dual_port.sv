@@ -8,8 +8,7 @@ module magic_memory_dp
 (
     tb_itf.magic_mem itf
 );
-timeprecision 1ns;
-timeunit 1ns;
+
 
 logic [7:0] mem [logic [31:0]];
 
@@ -22,6 +21,7 @@ end
 
 always @(itf.mmcb)
 begin : response
+   
     if (itf.mmcb.read_a) begin
         itf.mmcb.resp_a <= 1'b1;
         for (int i = 0; i < 4; i++) begin
@@ -47,6 +47,7 @@ begin : response
     end else begin
         itf.mmcb.resp_b <= 1'b0;
     end
+    
 end : response
 
 endmodule : magic_memory_dp

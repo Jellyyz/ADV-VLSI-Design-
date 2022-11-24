@@ -1,7 +1,7 @@
 all: chiptop-tb aes-ks-tb full_sim_tb
 
 full_sim_tb: ../hvl/magic_mem_sim/top.sv full_sim_tb.scr  
-	vcs -timescale=1ns/100ps -full64 -top swamy_tb -f full_sim_tb.scr -o $@ \
+	vcs -gui -kdb -timescale=10ns/1ns -full64 -top swamy_tb -f full_sim_tb.scr -o $@ \
 		-xlrm uniq_prior_final -debug_access+r -kdb -sverilog \
 		+lint=ALL +lint=TFIPC-L -debug_access+all  -fsdb +memcbk
 
