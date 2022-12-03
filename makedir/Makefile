@@ -5,6 +5,12 @@ full_sim_tb: ../hvl/magic_mem_sim/top.sv full_sim_tb.scr
 		-xlrm uniq_prior_final -debug_access+r -kdb -sverilog \
 		+lint=ALL +lint=TFIPC-L -debug_access+all  -fsdb +memcbk
 
+ibex_tb: ../hdl/ibex_core/rtl/ibex_chiptop.sv full_sim_tb.scr   
+	vcs -kdb -timescale=10ns/1ns -full64 -top ibex_chiptop -f full_sim_tb.scr -o $@ \
+		-xlrm uniq_prior_final -debug_access+r -kdb -sverilog \
+		+lint=ALL +lint=TFIPC-L -debug_access+all  -fsdb +memcbk
+
+
 aes-ks-tb: aes-ks-tb.scr ../hvl/aes_ks_tb.sv
 	vcs -full64 -top aes_ks_tb -f aes-ks-tb.scr -o $@ \
 		-xlrm uniq_prior_final -debug_access+r -kdb -sverilog \

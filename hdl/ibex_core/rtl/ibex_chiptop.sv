@@ -107,3 +107,5 @@ ibex_top #(
     .scramble_req_o         ()
 
 );
+
+endmodule

@@ -110,3 +110,4 @@
 ../hvl/magic_mem_sim/source_tb.sv
 ../hvl/magic_mem_sim/magic_dual_port.sv
 ../hvl/magic_mem_sim/top.sv
+../hdl/ibex_core/rtl/ibex_chiptop.sv
