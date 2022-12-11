@@ -56,12 +56,26 @@ module ibex_decoder #(
 
   // register file
   output ibex_pkg::rf_wd_sel_e rf_wdata_sel_o,   // RF write data selection
-  output logic                 rf_we_o,          // write enable for regfile
+  // TODO: Check if there is a need for a select signal for our FPU.
+  // output logic                 rf_we_o,          // write enable for regfile
+
   output logic [4:0]           rf_raddr_a_o,
   output logic [4:0]           rf_raddr_b_o,
   output logic [4:0]           rf_waddr_o,
   output logic                 rf_ren_a_o,          // Instruction reads from RF addr A
   output logic                 rf_ren_b_o,          // Instruction reads from RF addr B
+  
+  // New
+  // TODO: FP RF write data selection
+  // No ren signals as they are not register file enables, 
+  // but used to control RVFI instead
+  output logic                 rf_we_int_o,          // write enable for regfile
+  output logic                 rf_we_fp_o,          // write enable for FP regfile
+  output logic [4:0]           rf_raddr_c_o, 
+  output logic                 rf_sel_fp_a_o, // Select operand A from FP reg file
+  output logic                 rf_sel_fp_b_o, // Select operand B from FP reg file
+
+  output logic                 rf_lsu_to_fp_o, // Tell LSU which reg file the load goes to
 
   // ALU
   output ibex_pkg::alu_op_e    alu_operator_o,        // ALU operation selection
@@ -102,7 +116,9 @@ module ibex_decoder #(
   logic        illegal_insn;
   logic        illegal_reg_rv32e;
   logic        csr_illegal;
-  logic        rf_we;
+  // logic        rf_we;
+  logic        rf_we_int;
+  logic        rf_we_fp;
 
   logic [31:0] instr;
   logic [31:0] instr_alu;
@@ -168,6 +184,7 @@ module ibex_decoder #(
   assign instr_rs3 = instr[31:27];
   assign rf_raddr_a_o = (use_rs3_q & ~instr_first_cycle_i) ? instr_rs3 : instr_rs1; // rs3 / rs1
   assign rf_raddr_b_o = instr_rs2; // rs2
+  assign rf_raddr_c_o = instr_rs3; // rs3, new
 
   // destination register
   assign instr_rd = instr[11:7];
@@ -177,9 +194,12 @@ module ibex_decoder #(
   // Register check //
   ////////////////////
   if (RV32E) begin : gen_rv32e_reg_check_active
+    // assign illegal_reg_rv32e = ((rf_raddr_a_o[4] & (alu_op_a_mux_sel_o == OP_A_REG_A)) |
+    //                             (rf_raddr_b_o[4] & (alu_op_b_mux_sel_o == OP_B_REG_B)) |
+    //                             (rf_waddr_o[4]   & rf_we));
     assign illegal_reg_rv32e = ((rf_raddr_a_o[4] & (alu_op_a_mux_sel_o == OP_A_REG_A)) |
                                 (rf_raddr_b_o[4] & (alu_op_b_mux_sel_o == OP_B_REG_B)) |
-                                (rf_waddr_o[4]   & rf_we));
+                                (rf_waddr_o[4]   & rf_we_int));
   end else begin : gen_rv32e_reg_check_inactive
     assign illegal_reg_rv32e = 1'b0;
   end
@@ -212,9 +232,19 @@ module ibex_decoder #(
     multdiv_signed_mode_o = 2'b00;
 
     rf_wdata_sel_o        = RF_WD_EX;
-    rf_we                 = 1'b0;
+    // rf_we                 = 1'b0;
     rf_ren_a_o            = 1'b0;
     rf_ren_b_o            = 1'b0;
+
+    // New
+    rf_we_int             = 1'b0;
+    rf_we_fp              = 1'b0;
+    rf_fp_ren_a_o            = 1'b0;
+    rf_fp_ren_b_o            = 1'b0;
+    rf_fp_ren_c_o            = 1'b0;
+    rf_sel_fp_a_o            = 1'b0; // Default to int regfile
+    rf_sel_fp_b_o            = 1'b0; // Default to int regfile
+    rf_lsu_to_fp_o       = 1'b0;
 
     csr_access_o          = 1'b0;
     csr_illegal           = 1'b0;
@@ -245,11 +275,13 @@ module ibex_decoder #(
 
         if (instr_first_cycle_i) begin
           // Calculate jump target (and store PC + 4 if BranchTargetALU is configured)
-          rf_we            = BranchTargetALU;
+          // rf_we            = BranchTargetALU;
+          rf_we_int            = BranchTargetALU;
           jump_set_o       = 1'b1;
         end else begin
           // Calculate and store PC+4
-          rf_we            = 1'b1;
+          // rf_we            = 1'b1;
+          rf_we_int            = 1'b1;
         end
       end
 
@@ -258,11 +290,13 @@ module ibex_decoder #(
 
         if (instr_first_cycle_i) begin
           // Calculate jump target (and store PC + 4 if BranchTargetALU is configured)
-          rf_we            = BranchTargetALU;
+          // rf_we            = BranchTargetALU;
+          rf_we_int            = BranchTargetALU;
           jump_set_o       = 1'b1;
         end else begin
           // Calculate and store PC+4
-          rf_we            = 1'b1;
+          // rf_we            = 1'b1;
+          rf_we_int            = 1'b1;
         end
         if (instr[14:12] != 3'b0) begin
           illegal_insn = 1'b1;
@@ -340,16 +374,19 @@ module ibex_decoder #(
       /////////
 
       OPCODE_LUI: begin  // Load Upper Immediate
-        rf_we            = 1'b1;
+        // rf_we            = 1'b1;
+        rf_we_int            = 1'b1;
       end
 
       OPCODE_AUIPC: begin  // Add Upper Immediate to PC
-        rf_we            = 1'b1;
+        // rf_we            = 1'b1;
+        rf_we_int            = 1'b1;
       end
 
       OPCODE_OP_IMM: begin // Register-Immediate ALU Operations
         rf_ren_a_o       = 1'b1;
-        rf_we            = 1'b1;
+        // rf_we            = 1'b1;
+        rf_we_int            = 1'b1;
 
         unique case (instr[14:12])
           3'b000,
@@ -449,7 +486,8 @@ module ibex_decoder #(
       OPCODE_OP: begin  // Register-Register ALU operation
         rf_ren_a_o      = 1'b1;
         rf_ren_b_o      = 1'b1;
-        rf_we           = 1'b1;
+        // rf_we           = 1'b1;
+        rf_we_int           = 1'b1;
         if ({instr[26], instr[13:12]} == {1'b1, 2'b01}) begin
           illegal_insn = (RV32B != RV32BNone) ? 1'b0 : 1'b1; // cmix / cmov / fsl / fsr
         end else begin
@@ -566,7 +604,8 @@ module ibex_decoder #(
         unique case (instr[14:12])
           3'b000: begin
             // FENCE is treated as a NOP since all memory operations are already strictly ordered.
-            rf_we           = 1'b0;
+            // rf_we           = 1'b0;
+            rf_we_int           = 1'b0;
           end
           3'b001: begin
             // FENCE.I is implemented as a jump to the next PC, this gives the required flushing
@@ -575,7 +614,8 @@ module ibex_decoder #(
             // If present, the ICache will also be flushed.
             jump_in_dec_o   = 1'b1;
 
-            rf_we           = 1'b0;
+            // rf_we           = 1'b0;
+            rf_we_int           = 1'b0;
 
             if (instr_first_cycle_i) begin
               jump_set_o       = 1'b1;
@@ -621,7 +661,8 @@ module ibex_decoder #(
           // instruction to read/modify CSR
           csr_access_o     = 1'b1;
           rf_wdata_sel_o   = RF_WD_CSR;
-          rf_we            = 1'b1;
+          // rf_we            = 1'b1;
+          rf_we_int            = 1'b1;
 
           if (~instr[14]) begin
             rf_ren_a_o         = 1'b1;
@@ -638,6 +679,60 @@ module ibex_decoder #(
         end
 
       end
+      
+      // ZX: New opcodes
+      // WB signals for load/store come from LSU (same for int ld/st)
+      OPCODE_LOAD_FP: begin
+        rf_ren_a_o          = 1'b1; // Int reg for reg to get addr
+        data_req_o          = 1'b1;
+        // load size is a word. For fp load this is always the case.
+        if (instr[14]) begin
+          illegal_insn = 1'b1;
+        end
+
+        unique case (instr[13:12])
+          2'b10: data_type_o = 2'b00;      // word
+          default: illegal_insn = 1'b1;
+        endcase
+
+        rf_lsu_to_fp_o = 1'b1;
+
+        // Taken from OPCODE_LOAD, should not matter since the size is always word.
+        // sign/zero extension
+        // data_sign_extension_o = ~instr[14];
+
+      end
+      OPCODE_STORE_FP: begin
+        // rs1 is int reg to calculate mem addr
+        rf_ren_a_o         = 1'b1;
+        
+        // rs2 is fp reg 
+        rf_fp_ren_b_o         = 1'b1;
+        // select output from FP regfile for rs2!
+        rf_sel_fp_b_o         = 1'b1;
+
+        // To mem (passes through LSU)
+        data_req_o         = 1'b1;
+        data_we_o          = 1'b1;
+
+        if (instr[14]) begin
+          illegal_insn = 1'b1;
+        end
+
+        // store size
+        unique case (instr[13:12])
+          2'b10:   data_type_o  = 2'b00; // sw
+          default: illegal_insn = 1'b1;
+        endcase
+      end
+
+      OPCODE_FMADD: ;
+      OPCODE_FMSUB: ;
+      OPCODE_FNMSUB: ;
+      OPCODE_FNMADD: ;
+      OPCODE_OP_FP: ;
+      OPCODE_SYSTEM: ; 
+
       default: begin
         illegal_insn = 1'b1;
       end
@@ -654,13 +749,17 @@ module ibex_decoder #(
     // insufficient privileges), or when accessing non-available registers in RV32E,
     // these cases are not handled here
     if (illegal_insn) begin
-      rf_we           = 1'b0;
+      // rf_we           = 1'b0;
       data_req_o      = 1'b0;
       data_we_o       = 1'b0;
       jump_in_dec_o   = 1'b0;
       jump_set_o      = 1'b0;
       branch_in_dec_o = 1'b0;
       csr_access_o    = 1'b0;
+
+      // New
+      rf_we_int       = 1'b0;
+      rf_fp_we_o      = 1'b0;
     end
   end
 
@@ -1194,7 +1293,9 @@ module ibex_decoder #(
   assign illegal_insn_o = illegal_insn | illegal_reg_rv32e;
 
   // do not propgate regfile write enable if non-available registers are accessed in RV32E
-  assign rf_we_o = rf_we & ~illegal_reg_rv32e;
+  // assign rf_we_o = rf_we & ~illegal_reg_rv32e;
+  assign rf_we_int_o  = rf_we_int & ~illegal_reg_rv32e;
+  assign rf_we_fp_o   = rf_we_fp  & ~illegal_reg_rv32e;
 
   // Not all bits are used
   assign unused_instr_alu = {instr_alu[19:15],instr_alu[11:7]};
