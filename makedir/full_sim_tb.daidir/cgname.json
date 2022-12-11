@@ -1,0 +1,170 @@
+{
+    "_vcs_DPI_package": [
+        "_vcs_DPI_package",
+        "uM9F1",
+        "module",
+        1
+    ],
+    "vcs_paramclassrepository": [
+        "vcs_paramclassrepository",
+        "hEeZs",
+        "module",
+        2
+    ],
+    "std": [
+        "std",
+        "reYIK",
+        "module",
+        3
+    ],
+    "ibex_pkg": [
+        "ibex_pkg",
+        "A0dZk",
+        "module",
+        4
+    ],
+    "prim_pkg": [
+        "prim_pkg",
+        "vbVTH",
+        "module",
+        5
+    ],
+    "prim_cipher_pkg": [
+        "prim_cipher_pkg",
+        "KGFJg",
+        "module",
+        6
+    ],
+    "prim_ram_1p_pkg": [
+        "prim_ram_1p_pkg",
+        "JYtvx",
+        "module",
+        7
+    ],
+    "prim_ram_2p_pkg": [
+        "prim_ram_2p_pkg",
+        "x7R1Q",
+        "module",
+        8
+    ],
+    "prim_secded_pkg": [
+        "prim_secded_pkg",
+        "zJKRF",
+        "module",
+        9
+    ],
+    "prim_util_pkg": [
+        "prim_util_pkg",
+        "GASTi",
+        "module",
+        10
+    ],
+    "prim_buf_0000": [
+        "prim_buf_0000",
+        "SVKvs",
+        "module",
+        11
+    ],
+    "prim_buf_0000_0000": [
+        "prim_buf_0000_0000",
+        "WLFN9",
+        "module",
+        12
+    ],
+    "prim_clock_gating_0000": [
+        "prim_clock_gating_0000",
+        "sT8iC",
+        "module",
+        13
+    ],
+    "ibex_alu_0000": [
+        "ibex_alu_0000",
+        "dgwCQ",
+        "module",
+        14
+    ],
+    "ibex_controller_0000": [
+        "ibex_controller_0000",
+        "EiW6s",
+        "module",
+        15
+    ],
+    "ibex_cs_registers_0000": [
+        "ibex_cs_registers_0000",
+        "ZYcQd",
+        "module",
+        16
+    ],
+    "ibex_decoder_0000": [
+        "ibex_decoder_0000",
+        "yn82E",
+        "module",
+        17
+    ],
+    "ibex_ex_block_0000": [
+        "ibex_ex_block_0000",
+        "Yw9K4",
+        "module",
+        18
+    ],
+    "ibex_id_stage_0000": [
+        "ibex_id_stage_0000",
+        "z1VhH",
+        "module",
+        19
+    ],
+    "ibex_if_stage_0000": [
+        "ibex_if_stage_0000",
+        "L7dFI",
+        "module",
+        20
+    ],
+    "ibex_multdiv_fast_0000": [
+        "ibex_multdiv_fast_0000",
+        "s4Vfp",
+        "module",
+        21
+    ],
+    "ibex_wb_stage_0000": [
+        "ibex_wb_stage_0000",
+        "feu9J",
+        "module",
+        22
+    ],
+    "ibex_core_0000": [
+        "ibex_core_0000",
+        "NKVwf",
+        "module",
+        23
+    ],
+    "ibex_register_file_ff_0000": [
+        "ibex_register_file_ff_0000",
+        "WEzvH",
+        "module",
+        24
+    ],
+    "tb_itf": [
+        "tb_itf",
+        "FVkkr",
+        "module",
+        25
+    ],
+    "swamy_tb": [
+        "swamy_tb",
+        "KGebU",
+        "module",
+        26
+    ],
+    "ibex_chiptop": [
+        "ibex_chiptop",
+        "C1q8x",
+        "module",
+        27
+    ],
+    "...MASTER...": [
+        "SIM",
+        "amcQw",
+        "module",
+        28
+    ]
+}

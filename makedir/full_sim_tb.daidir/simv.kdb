@@ -1,0 +1,22 @@
+rc file Version 1.0
+
+[Design]
+COMPILE_PATH=/home/ghuang23/Desktop/ADV-VLSI-Design-/makedir
+VCS_HOME=/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1
+VERDI_HOME=/software/Synopsys-2021_x86_64/verdi/R-2020.12-SP1-1
+SystemC=FALSE
+UUM=FALSE
+KDB=TRUE
+USE_NOVAS_HOME=FALSE
+COSIM=FALSE
+TOP=swamy_tb 
+OPTION=-ssv -ssy 
+ELAB_OPTION=-ssv -ssy 
+ELAB=TRUE
+SIMV_WRAPPER=FALSE
+[vcs]
+RUN_ELABCOM=unset TURBO_LOG_DIR ;\rm -rf /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/elabcomLog ;/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/bin/elabcom -logdir /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/elabcomLog  -simvdaidir /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir  -lib /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/work  -saveLevel  -elab /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/kdb -simflow -simdir /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/kdb_libs -topfile /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/.elabcomTopFile -pkgfile /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/.elabcomPkgFile -ssv -ssy  -Lf work +disable_message+C00380+C00381 +disable_message+C00388+C00389  >& /dev/null  && echo Success >& /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/.elabcomReport || echo Fail >& /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/.elabcomReport; \rm -rf /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/work.lib++ /home/ghuang23/Desktop/ADV-VLSI-Design-/makedir/full_sim_tb.daidir/kdb_libs/ 
+
+[Value]
+WREALX=ffff534e50535f58
+WREALZ=ffff534e50535f5a

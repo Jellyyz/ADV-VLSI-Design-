@@ -94,11 +94,29 @@ set_app_var target_library "${target_library} ${dmem_lib} ${icache_tag_lib} ${ic
 set_app_var link_library "${link_library} ${dmem_lib} ${icache_tag_lib} ${icache_data_lib}"
 
 # analyze -library WORK -format sverilog "../hdl/packages/chiptypes_pkg.sv"
+
+#################################
+####### Loads MMU files #########
+#################################
+
+set modules {
+    "mmu"
+}
+puts "analyzing mmu"
+analyze -library WORK -format sverilog "../hdl/Memory/mmu.sv"
+
+
+
+#############################################################
+####### Loads ibex_core/rtl and ibex_(module) files #########
+#############################################################
+
 ############### Ibex Analyze ################
 set modules {
     "if_stage" "id_stage" "ex_block" "load_store_unit" "wb_stage"
     "cs_registers" "icache" "compressed_decoder" "decoder"
     "controller" "alu" "multdiv_fast" "csr" "counter" "branch_predict"
+    "prefetch_buffer" "fetch_fifo"
 }
 set rtlprefix "../hdl/ibex_core/rtl"
 analyze -library WORK -format sverilog "../hdl/ibex_core/package/ibex_pkg.sv"
@@ -107,6 +125,9 @@ foreach module $modules {
     puts "analyzing $module"
     analyze -library WORK -format sverilog "${rtlprefix}/ibex_${module}.sv"
 }
+#############################################################
+####### Loads ibex_core/prim and prim/(module) files ########
+#############################################################
 
 analyze -library WORK -format sverilog "../hdl/ibex_core/package/prim_ram_1p_pkg.sv"
 analyze -library WORK -format sverilog "../hdl/ibex_core/package/prim_secded_pkg.sv"

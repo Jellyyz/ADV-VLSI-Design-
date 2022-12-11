@@ -5,12 +5,16 @@ module ibex_chiptop(
     input    rst_ni,
     input    logic [7:0] ext_sram_rdata,
     output   logic [7:0] ext_sram_wdata,
-    output   logic [31:0] ext_sram_addr,
+    output   logic [15:0] ext_sram_addr,
     output   ext_sram_read,
     output   ext_sram_write
 
 );
 
+
+logic [31:0] ext_sram_addr_32;
+
+assign ext_sram_addr = ext_sram_addr_32[15:0];
 
 logic instr_req;
 logic instr_gnt;
@@ -20,7 +24,6 @@ logic [31:0] instr_rdata;
 
 logic data_req;
 logic data_rvalid;
-logic data_gnt;
 logic data_gnt;
 logic data_we;
 logic [3:0] data_be;
@@ -49,7 +52,7 @@ mmu mmu(
 
     .ext_sram_rdata_i   (ext_sram_rdata),
     .ext_sram_wdata_o   (ext_sram_wdata),
-    .ext_sram_addr_o    (ext_sram_addr),
+    .ext_sram_addr_o    (ext_sram_addr_32),
     .ext_sram_read_o    (ext_sram_read),
     .ext_sram_write_o   (ext_sram_write)
 );
@@ -94,8 +97,8 @@ ibex_top #(
     .instr_rvalid_i         (instr_rvalid),
     .instr_addr_o           (instr_addr),
     .instr_rdata_i          (instr_rdata),
-    .instr_rdata_intg_i     (1'b0), //that's what a bunch of examples did, so doesn't seem too unreasonable
-    .instr_err_i            (7'b0),
+    .instr_rdata_intg_i     (7'b0), //that's what a bunch of examples did, so doesn't seem too unreasonable
+    .instr_err_i            (1'b0),
 
     // Data memory interface
     .data_req_o             (data_req),
@@ -105,10 +108,10 @@ ibex_top #(
     .data_be_o              (data_be),
     .data_addr_o            (data_addr),
     .data_wdata_o           (data_wdata),
-    .data_wdata_intg_o      (1'b0), //the FPGA example sets this to '0, so so am I
+    .data_wdata_intg_o      (7'b0), //the FPGA example sets this to '0, so so am I
     .data_rdata_i           (data_rdata),
-    .data_rdata_intg_i      (1'b0), 
-    .data_err_i             (7'b0),
+    .data_rdata_intg_i      (7'b0), 
+    .data_err_i             (1'b0),
 
     // Interrupt inputs
     //All of these were copied from the artya example

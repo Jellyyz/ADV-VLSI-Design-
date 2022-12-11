@@ -635,7 +635,6 @@ module ibex_top import ibex_pkg::*; #(
           .cfg_i       (ram_cfg_i)
         );
 
-
         // Data RAM instantiation
         prim_ram_1p #(
           .Width              (LineSizeECC),
