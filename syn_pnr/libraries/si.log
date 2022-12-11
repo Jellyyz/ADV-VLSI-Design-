@@ -1,0 +1,43 @@
+Virtuoso Framework License (111) was checked out successfully. Total checkout time was 0.02s.
+
+Initializing from libInit.il for library tsmcN65...
+   --  tsmcN65_updateCDFs.il
+   --  tsmcPdkParamTable.il
+   --  tsmc_esti.ile
+   --  /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/tsmcN65gp_v1d0c.cxt
+   --  /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/tsmcN65_newAMS.cxt
+   --  /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/tsmcN65_newRTMOM.cxt
+   --  /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/tsmcN65GP_v1d0.cxt
+   --  tif_tcf_crn65gp_v1.0a.cxt
+   --  tsmcN65.cxt
+   --  tsmcN65GP_v1d0.cxt
+   --  tsmcN65Tool.cxt
+   --  tsmcN65_newAMS.cxt
+*WARNING* (loadContext): context /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/64bit/tsmcN65GP_v1d0.cxt already loaded
+
+   --  tsmcN65_newRTMOM.cxt
+*WARNING* (loadContext): context /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/64bit/tsmcN65_newAMS.cxt already loaded
+
+   --  tsmcN65gp_v1d0c.cxt
+*WARNING* (loadContext): context /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/64bit/tsmcN65_newRTMOM.cxt already loaded
+
+   --  /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/tsmcN65GP_v1d0.cxt
+*WARNING* (loadContext): context /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/64bit/tsmcN65gp_v1d0c.cxt already loaded
+
+   --  /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/tsmcN65_newRTMOM.cxt
+*WARNING* (loadContext): context //ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/64bit/tsmcN65GP_v1d0.cxt already loaded
+
+   --  /ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/tsmcN65_newAMS.cxt
+*WARNING* (loadContext): context //ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/64bit/tsmcN65_newRTMOM.cxt already loaded
+
+Loading Working place Display File '/ece498hk/group/workarea/ece498hksrv-05/cadence/display.drf'
+INFO (TECH-150003): The technology database "tsmcN65" has been automatically
+updated from revision 226610(DM 4) to revision 227612(DM 4) in virtual memory.
+*WARNING* (loadContext): context //ece498hk/libs/TSMC65GP_RFMIM__1P0V_2P5V__1p9m_6X1Z1U_ALRDL/tsmcN65/../skill/64bit/tsmcN65_newAMS.cxt already loaded
+
+Loading hnlInit.cxt 
+Running Artist Hierarchical Netlisting ...
+
+Loading cdf.cxt 
+End netlisting May  3 13:19:21 2022
+

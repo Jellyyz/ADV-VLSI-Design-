@@ -1,0 +1,9 @@
+tee.out
+*.rpt
+*.log
+*.svf
+*.pvl
+*.syn
+*.mr
+alib-52
+*.pvk

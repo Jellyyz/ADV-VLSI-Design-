@@ -12,15 +12,15 @@ module ibex_chiptop(
 logic inst_read;
 logic inst_resp;
 logic delay_iresp;
-logic inst_addr;
+logic [31:0] inst_addr;
 
 logic data_req;
 logic data_resp;
 logic delay_dresp;
 logic write_enable;
-logic data_mbe;
-logic data_addr;
-logic data_wdata;
+logic [3:0] data_mbe;
+logic [31:0] data_addr;
+logic [31:0] data_wdata;
 
 
 
@@ -38,7 +38,6 @@ ibex_top #(
     .ICache           ( 0                                ),
     .ICacheECC        ( 0                                ),
     .ICacheScramble   ( 0                                ),
-    .BranchPrediction ( 0                                ),
     .SecureIbex       ( 0                                ),
     .RndCnstLfsrSeed  ( ibex_pkg::RndCnstLfsrSeedDefault ),
     .RndCnstLfsrPerm  ( ibex_pkg::RndCnstLfsrPermDefault ),
@@ -63,8 +62,8 @@ ibex_top #(
     .instr_rvalid_i         (delay_iresp),
     .instr_addr_o           (inst_addr),
     .instr_rdata_i          ({24'h0,instr_rdata_i}),
-    .instr_rdata_intg_i     ('0), //that's what a bunch of examples did, so doesn't seem too unreasonable
-    .instr_err_i            ('b0),
+    .instr_rdata_intg_i     (7'b0), //that's what a bunch of examples did, so doesn't seem too unreasonable
+    .instr_err_i            (1'b0),
 
     // Data memory interface
     .data_req_o             (data_req),
@@ -76,8 +75,8 @@ ibex_top #(
     .data_wdata_o           (data_wdata),
     .data_wdata_intg_o      ('0), //the FPGA example sets this to '0, so so am I
     .data_rdata_i           ({24'h0,data_rdata_i}),
-    .data_rdata_intg_i      ('0), 
-    .data_err_i             ('b0),
+    .data_rdata_intg_i      (7'b0), 
+    .data_err_i             (1'b0),
 
     // Interrupt inputs
     //All of these were copied from the artya example
@@ -89,11 +88,11 @@ ibex_top #(
 
     // Debug interface
     //again values copied from the FPGA example
-    .debug_req_i            ('b0),
+    .debug_req_i            (1'b0),
     .crash_dump_o           (),
 
     // Special control signals
-    .fetch_enable_i         ('b1),
+    .fetch_enable_i         (4'b1),
     .alert_minor_o          (),
     .alert_major_internal_o (),
     .alert_major_bus_o      (),
@@ -101,9 +100,9 @@ ibex_top #(
     .double_fault_seen_o    (),
 
     // scramble 
-    .scramble_key_valid_i   ('0),
-    .scramble_key_i         ('0),
-    .scramble_nonce_i       ('0),
+    .scramble_key_valid_i   (1'b0),
+    .scramble_key_i         (128'h0),
+    .scramble_nonce_i       (64'h0),
     .scramble_req_o         ()
 
 );

@@ -514,8 +514,33 @@ module ibex_top import ibex_pkg::*; #(
   // Rams Instantiation //
   ////////////////////////
 
+  logic [8:0] icache_tag_addr;
+ 
+
   if (ICache) begin : gen_rams
 
+    // // icache data storage 
+    // icache_data icache_data(
+    //   .CLK(clk_i), .Q(), 
+    //   .CEN(), .WEN(), 
+    //   .A(), .D(), 
+    //   .EMA(), .GWEN(), 
+    //   .RETN(),
+
+    //   .Q()
+    // );
+    
+    // // icache tag storage 
+    // icache_tag icache_tag(
+    //   .CLK(clk_i), .Q({ic_tag_rdata[0], ic_tag_rdata[1]}), 
+    //   .CEN(ic_tag_req[0] | ic_tag_req[1]), .WEN(ic_tag_write), 
+    //   .A(ic_tag_addr), .D(ic_tag_wdata), 
+    //   .EMA(), .GWEN(), 
+    //   .RETN(),
+
+    //   .Q()
+    // );
+    
     for (genvar way = 0; way < IC_NUM_WAYS; way++) begin : gen_rams_inner
 
       if (ICacheScramble) begin : gen_scramble_rams
@@ -591,6 +616,7 @@ module ibex_top import ibex_pkg::*; #(
       end else begin : gen_noscramble_rams
 
         // Tag RAM instantiation
+
         prim_ram_1p #(
           .Width            (TagSizeECC),
           .Depth            (IC_NUM_LINES),
@@ -608,6 +634,7 @@ module ibex_top import ibex_pkg::*; #(
           .rdata_o     (ic_tag_rdata[way]),
           .cfg_i       (ram_cfg_i)
         );
+
 
         // Data RAM instantiation
         prim_ram_1p #(

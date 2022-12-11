@@ -91,11 +91,11 @@
 //  ASSUME_I:     Assume an immediate property
 
 `ifdef VERILATOR
- `include "prim_assert_dummy_macros.svh"
+ `include "../hdl/ibex_core/rtl/prim/prim_assert_standard_macros.svh"
 `elsif SYNTHESIS
- `include "prim_assert_dummy_macros.svh"
+ `include "../hdl/ibex_core/rtl/prim/prim_assert_standard_macros.svh"
 `elsif YOSYS
- `include "prim_assert_yosys_macros.svh"
+ `include "../hdl/ibex_core/rtl/prim/prim_assert_standard_macros.svh"
  `define INC_ASSERT
 `else
  `include "../hdl/ibex_core/rtl/prim/prim_assert_standard_macros.svh"

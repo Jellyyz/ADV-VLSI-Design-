@@ -1,0 +1,16 @@
+#@ # 
+#@ # Running lc_shell Version R-2020.09-SP5 for linux64 -- Apr 14, 2021
+#@ # Date:   Fri Dec  9 16:56:52 2022
+#@ # Run by: ghuang23@ece-498hk-02.ece.illinois.edu
+#@ 
+
+help
+read_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_syn.lib
+write_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_
+write_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c
+read_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_syn.lib
+write_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c.db
+write_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_syn.lib
+read_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_syn.lib
+write_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_syn.lib
+read_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_syn.lib
