@@ -12,7 +12,7 @@
 // `include "tb_itf.sv"
 `include "../hvl/magic_mem_sim/tb_itf.sv"
 module source_tb(
-    tb_itf.magic_mem magic_mem_itf,
+    tb_itf.magic_mem_single magic_mem_itf,
     tb_itf.mem mem_itf,
     tb_itf.sm sm_itf,
     tb_itf.tb tb_itf
@@ -29,7 +29,7 @@ initial begin
 end
 
 /**************************** Halting Conditions *****************************/
-int timeout = 1000000;
+int timeout = 100000000;
 
 
 always @(posedge tb_itf.clk) begin
@@ -46,7 +46,7 @@ end
 `define PAGE_RESPONSE_CYCLES $ceil(`PARAM_RESPONSE_CYCLES / 2.0)
 
 generate
-    magic_memory_dp mem(magic_mem_itf);
+    magic_memory_sp mem(magic_mem_itf);
 endgenerate
 
 

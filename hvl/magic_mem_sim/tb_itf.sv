@@ -47,6 +47,11 @@ interface tb_itf();
     logic mem_resp;
     logic [63:0] mem_rdata;
 
+    //single port mm ports
+
+    logic [7:0] mem_rdata_8;
+    logic [7:0] mem_wdata_8;
+
     /* Mailbox for memory path */
     mailbox #(string) path_mb;
     initial path_mb = new();
@@ -68,16 +73,23 @@ interface tb_itf();
     endclocking
 
     /* Magic Memory */
-    clocking mmcb @(negedge clk);
-        input reset = rst, read_a = inst_read, address_a = inst_addr, read_b = data_read,
-              write = data_write, wmask = data_mbe, address_b = data_addr,
-              wdata = data_wdata;
-        output resp_a = inst_resp, rdata_a = inst_rdata, resp_b = data_resp,
-               rdata_b = data_rdata;
+    // clocking mmcb @(negedge clk);
+    //     input reset = rst, read_a = inst_read, address_a = inst_addr, read_b = data_read,
+    //           write = data_write, wmask = data_mbe, address_b = data_addr,
+    //           wdata = data_wdata;
+    //     output resp_a = inst_resp, rdata_a = inst_rdata, resp_b = data_resp,
+    //            rdata_b = data_rdata;
+    // endclocking
+
+    clocking mmscb @(negedge clk);
+        input read = mem_read, write = mem_write, addr = mem_addr,
+              wdata = mem_wdata_8, rst = rst;
+        output resp = mem_resp, rdata = mem_rdata_8;
     endclocking
 
     modport mem(clocking mcb, ref path_mb);
-    modport magic_mem(clocking mmcb, ref path_mb);
+    // modport magic_mem(clocking mmcb, ref path_mb);
+    modport magic_mem_single(clocking mmscb, ref path_mb);
     modport sm(clocking smcb, ref path_mb);
     modport tb(input clk, registers, output rst, ref path_mb);
 

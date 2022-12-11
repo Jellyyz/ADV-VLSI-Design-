@@ -1,26 +1,58 @@
 module ibex_chiptop(
-    input vss,
-    input vdd,
-    input clk_i,
-    input rst_ni,
-    input logic [7:0] instr_rdata_i, //concatenated instr data in
-    input logic [7:0] data_rdata_i //total 20 pins only
+    input    vss,
+    input    vdd,
+    input    clk_i,
+    input    rst_ni,
+    input    logic [7:0] ext_sram_rdata,
+    output   logic [7:0] ext_sram_wdata,
+    output   logic [31:0] ext_sram_addr,
+    output   ext_sram_read,
+    output   ext_sram_write
 
 );
 
 
-logic inst_read;
-logic inst_resp;
-logic delay_iresp;
-logic inst_addr;
+logic instr_req;
+logic instr_gnt;
+logic instr_rvalid;
+logic [31:0] instr_addr;
+logic [31:0] instr_rdata;
 
 logic data_req;
-logic data_resp;
-logic delay_dresp;
-logic write_enable;
-logic data_mbe;
-logic data_addr;
-logic data_wdata;
+logic data_rvalid;
+logic data_gnt;
+logic data_gnt;
+logic data_we;
+logic [3:0] data_be;
+logic [31:0] data_addr;
+logic [31:0] data_wdata;
+logic [31:0] data_rdata;
+
+
+mmu mmu(
+    .clk                (clk_i),
+    .rst_ni             (rst_ni),
+    .instr_req_i        (instr_req),
+    .instr_gnt_o        (instr_gnt),
+    .instr_rvalid_o     (instr_rvalid),
+    .instr_addr_i       (instr_addr),
+    .instr_rdata_o      (instr_rdata),
+
+    .data_req_i         (data_req),
+    .data_gnt_o         (data_gnt),
+    .data_rvalid_o      (data_rvalid),
+    .data_we_i          (data_we),
+    .data_be_i          (data_be),
+    .data_addr_i        (data_addr),
+    .data_wdata_i       (data_wdata),
+    .data_rdata_o       (data_rdata),
+
+    .ext_sram_rdata_i   (ext_sram_rdata),
+    .ext_sram_wdata_o   (ext_sram_wdata),
+    .ext_sram_addr_o    (ext_sram_addr),
+    .ext_sram_read_o    (ext_sram_read),
+    .ext_sram_write_o   (ext_sram_write)
+);
 
 
 
@@ -35,7 +67,7 @@ ibex_top #(
     .RV32M            ( ibex_pkg::RV32MFast              ),
     .RV32B            ( ibex_pkg::RV32BNone              ),
     .RegFile          ( ibex_pkg::RegFileFF              ),
-    .ICache           ( 0                                ),
+    .ICache           ( 1                                ),
     .ICacheECC        ( 0                                ),
     .ICacheScramble   ( 0                                ),
     .BranchPrediction ( 0                                ),
@@ -45,7 +77,7 @@ ibex_top #(
     .DbgTriggerEn     ( 0                                ),
     .DmHaltAddr       ( 32'h1A110800                     ),
     .DmExceptionAddr  ( 32'h1A110808                     )
-) ibex_c0re (
+) ibex_core (
     // Clock and reset
     .clk_i                  (clk_i),
     .rst_ni                 (rst_ni),
@@ -58,24 +90,24 @@ ibex_top #(
     .boot_addr_i            ('0), // this should make it boot at address 0x80
 
     // Instruction memory interface
-    .instr_req_o            (inst_read),
-    .instr_gnt_i            (inst_resp),
-    .instr_rvalid_i         (delay_iresp),
-    .instr_addr_o           (inst_addr),
-    .instr_rdata_i          ({24'h0,instr_rdata_i}),
+    .instr_req_o            (instr_req),
+    .instr_gnt_i            (instr_gnt),
+    .instr_rvalid_i         (instr_rvalid),
+    .instr_addr_o           (instr_addr),
+    .instr_rdata_i          (instr_rdata),
     .instr_rdata_intg_i     ('0), //that's what a bunch of examples did, so doesn't seem too unreasonable
     .instr_err_i            ('b0),
 
     // Data memory interface
     .data_req_o             (data_req),
-    .data_gnt_i             (data_resp),
-    .data_rvalid_i          (delay_dresp),
-    .data_we_o              (write_enable),
-    .data_be_o              (data_mbe),
+    .data_gnt_i             (data_gnt),
+    .data_rvalid_i          (data_rvalid),
+    .data_we_o              (data_we),
+    .data_be_o              (data_be),
     .data_addr_o            (data_addr),
     .data_wdata_o           (data_wdata),
     .data_wdata_intg_o      ('0), //the FPGA example sets this to '0, so so am I
-    .data_rdata_i           ({24'h0,data_rdata_i}),
+    .data_rdata_i           (data_rdata),
     .data_rdata_intg_i      ('0), 
     .data_err_i             ('b0),
 
