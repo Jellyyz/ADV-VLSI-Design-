@@ -131,10 +131,26 @@ Please refer to tb_itf.sv for more information.
 */
 
 logic data_req, write_enable;
+logic [31:0] mem_addr_32;
 
-assign itf.data_read = data_req & !write_enable;
-assign itf.data_write = data_req & write_enable;
+// assign itf.data_read = data_req & !write_enable;
+// assign itf.data_write = data_req & write_enable;
 
+assign itf.mem_addr = {mem_addr_32};
+
+ibex_chiptop(
+    .vss            (1'b0),
+    .vdd            (1'b0),
+    .clk_i          (itf.clk),
+    .rst_ni         (itf.rst),
+    .ext_sram_rdata (itf.mem_rdata_8),
+    .ext_sram_wdata (itf.mem_wdata_8),
+    .ext_sram_addr  (mem_addr_32),
+    .ext_sram_read  (itf.mem_read),
+    .ext_sram_write (itf.mem_write)
+);
+
+/*
 ibex_top #(
     .PMPEnable        ( 0                                ),
     .PMPGranularity   ( 0                                ),

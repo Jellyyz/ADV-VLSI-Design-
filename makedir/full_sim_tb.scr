@@ -1,7 +1,8 @@
 +incdir+../src/
 +incdir+../hdl/ibex_core/package
 +incdir+../hdl/ibex_core/rtl
-+incdir+../hvl/
++incdir+../hdl/ibex_core/
++incdir+../hdl/Memory/
 
 ../hdl/ibex_core/package/ibex_pkg.sv
 
@@ -108,6 +109,8 @@
 
 ../hvl/magic_mem_sim/tb_itf.sv
 ../hvl/magic_mem_sim/source_tb.sv
-../hvl/magic_mem_sim/magic_dual_port.sv
+../hvl/magic_mem_sim/magic_single_port.sv
 ../hvl/magic_mem_sim/top.sv
+../hdl/Memory/mmu.sv
+
 ../hdl/ibex_core/rtl/ibex_chiptop.sv
