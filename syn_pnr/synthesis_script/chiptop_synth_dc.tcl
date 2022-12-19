@@ -51,15 +51,15 @@ set design_output_delay_ns 4
 #/**************************************************/
 #/* Shouldn't Need To Change the Rest              */
 #/**************************************************/
-set SynopsysInstall [getenv "DCROOT"]
+set SynopsysInstall [getenv "SYNOPSYS_LC_ROOT"]
 set search_path [list . \
 [format "%s%s" $SynopsysInstall /libraries/syn] \
 [format "%s%s" $SynopsysInstall /dw/sim_ver] \
 ]
-#set synlib_wait_for_design_license [list "DesignWare-Foundation"]
+set synlib_wait_for_design_license [list "DesignWare-Foundation"]
 set symbol_library [list generic.sdb]
 set synthetic_library [list dw_foundation.sldb]
-#set synthetic_library dw_foundation.sldb
+set synthetic_library dw_foundation.sldb
 
 define_design_lib WORK -path ./work
 
@@ -90,11 +90,24 @@ set dmem_lib libraries/dmem_sram_nldm_tt_1p00v_1p00v_25c_syn.db
 set icache_tag_lib libraries/icache_tag_store_nldm_tt_1p00v_1p00v_25c_syn.db
 set icache_data_lib libraries/icache_data_store_nldm_tt_1p00v_1p00v_25c_syn.db
 
-set_app_var target_library "${target_library} ${dmem_lib} ${icache_tag_lib} ${icache_data_lib}"
-set_app_var link_library "${link_library} ${dmem_lib} ${icache_tag_lib} ${icache_data_lib}"
 
 # analyze -library WORK -format sverilog "../hdl/packages/chiptypes_pkg.sv"
 
+set syn_path "/software/Synopsys-2021_x86_64/syn/R-2020.09-SP4"
+set dw_path "${syn_path}/dw"
+for {set i 0} {$i !=7} {incr i} {
+    set search_path [concat $search_path "${dw_path}/dw0$i/lib/dw0$i"]
+}
+set LIB "/ece498hk/libs/T65GP_RFMIM_2fF_1P0V_2P5V_1p9m_6X1Z1U_ALRDL_OA61_PDK/stdcell_dig/fb_tsmc065gp_rvt_lvt/aci/sc-ad10/synopsys/scadv10_cln65gp_rvt_tt_1p0v_25c.db"
+set DW_LIB "${syn_path}/libraries/syn/dw_foundation.sldb"
+
+set link_library [list $LIB $DW_LIB]
+set target_library [list $LIB]
+set symbol_library [list $LIB]
+set synthetic_library $DW_LIB
+
+set_app_var target_library "${target_library} ${dmem_lib} ${icache_tag_lib} ${icache_data_lib}"
+set_app_var link_library "${link_library} ${dmem_lib} ${icache_tag_lib} ${icache_data_lib}"
 #################################
 ####### Loads MMU files #########
 #################################
@@ -105,7 +118,22 @@ set modules {
 puts "analyzing mmu"
 analyze -library WORK -format sverilog "../hdl/Memory/mmu.sv"
 
+#################################
+####### Loads DW files ##########
+#################################
 
+set modules {
+    "DW_fp_sqrt_inst"
+    "DW_fp_addsub_inst"
+    "DW_fp_cmp_inst"
+    "DW_fp_div_inst"
+    "DW_fp_mult_inst"
+    "DW_fp_flt2i_inst"
+    "DW_fp_i2flt_inst"
+    "DW_fp_mac_inst"
+}
+puts "analyzing designware stuff"
+analyze -library WORK -format sverilog "../hdl/dw_dependancies/DW_fp.v"
 
 #############################################################
 ####### Loads ibex_core/rtl and ibex_(module) files #########

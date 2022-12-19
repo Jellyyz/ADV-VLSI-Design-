@@ -61,49 +61,49 @@ setObjFPlanPolygon cell $env(TOP_LEVEL) 0  0 $width $height
 # # Output pins
 # editPin -snap TRACK -side INSIDE -layer 6 -assign 0 25  -pin 
 editPin -snap TRACK -side INSIDE -layer 6 -assign 0 85  -pin vdd
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 145  -pin instr_addr\[0\]  
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 205  -pin instr_addr\[1\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 265  -pin instr_addr\[2\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 325  -pin instr_addr\[3\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 385  -pin instr_addr\[4\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 445  -pin instr_addr\[5\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 505  -pin instr_addr\[6\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 565  -pin instr_addr\[7\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 625  -pin instr_addr\[8\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 685  -pin instr_addr\[9\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 0 745  -pin instr_addr\[10\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 145  -pin ext_sram_addr\[0\]  
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 205  -pin ext_sram_addr\[1\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 265  -pin ext_sram_addr\[2\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 325  -pin ext_sram_addr\[3\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 385  -pin ext_sram_addr\[4\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 445  -pin ext_sram_addr\[5\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 505  -pin ext_sram_addr\[6\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 565  -pin ext_sram_addr\[7\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 625  -pin ext_sram_addr\[8\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 685  -pin ext_sram_addr\[9\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 0 745  -pin ext_sram_addr\[10\] 
 
 # editPin -snap TRACK -side INSIDE -layer 6 -assign 25 750 -pin 
 editPin -snap TRACK -side INSIDE -layer 6 -assign 85 750 -pin vss
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 145 750 -pin instr_addr\[11\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 205 750 -pin instr_addr\[12\] 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 265 750 -pin instr_addr\[13\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 325 750 -pin instr_addr\[14\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 385 750 -pin instr_rdata\[0\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 445 750 -pin instr_rdata\[1\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 505 750 -pin instr_rdata\[2\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 565 750 -pin instr_rdata\[3\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 625 750 -pin instr_rdata\[4\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 685 750 -pin instr_rdata\[5\]
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 745 750 -pin instr_rdata\[6\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 145 750 -pin ext_sram_addr\[11\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 205 750 -pin ext_sram_addr\[12\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 265 750 -pin ext_sram_addr\[13\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 325 750 -pin ext_sram_addr\[14\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 385 750 -pin ext_sram_addr\[15\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 445 750 -pin ext_sram_wdata\[0\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 505 750 -pin ext_sram_wdata\[1\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 565 750 -pin ext_sram_wdata\[2\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 625 750 -pin ext_sram_wdata\[3\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 685 750 -pin ext_sram_wdata\[4\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 745 750 -pin ext_sram_wdata\[5\]
 
 
  
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 25 0 -pin spi_m_miso 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 85 0 -pin spi_m_sclk 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 145 0 -pin spi_s_mosi 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 205 0 -pin spi_s_sclk 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 265 0 -pin spi_s_miso 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 325 0 -pin spi_m_mosi 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 25 0 -pin ext_sram_wdata\[6\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 85 0 -pin ext_sram_wdata\[7\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 145 0 -pin ext_sram_rdata\[0\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 205 0 -pin ext_sram_rdata\[1\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 265 0 -pin ext_sram_rdata\[2\] 
+editPin -snap TRACK -side INSIDE -layer 6 -assign 325 0 -pin ext_sram_rdata\[3\] 
 editPin -snap TRACK -side INSIDE -layer 6 -assign 385 0 -pin rst_ni
 editPin -snap TRACK -side INSIDE -layer 6 -assign 445 0 -pin clk_i
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 505 0 -pin irq_extern
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 565 0 -pin gpi
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 625 0 -pin gpo
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 685 0 -pin 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 745 0 -pin phase\[12\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 505 0 -pin ext_sram_rdata\[4\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 565 0 -pin ext_sram_rdata\[5\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 625 0 -pin ext_sram_rdata\[6\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 685 0 -pin ext_sram_rdata\[7\]
+editPin -snap TRACK -side INSIDE -layer 6 -assign 745 0 -pin ext_sram_read
 
-# editPin -snap TRACK -side INSIDE -layer 6 -assign 750 25  -pin jtag_tdi
+editPin -snap TRACK -side INSIDE -layer 6 -assign 750 25  -pin ext_sram_write
 # editPin -snap TRACK -side INSIDE -layer 6 -assign 750 85  -pin jtag_tck
 # editPin -snap TRACK -side INSIDE -layer 6 -assign 750 145  -pin jtag_tms
 # editPin -snap TRACK -side INSIDE -layer 6 -assign 750 205  -pin jtag_trst_n
