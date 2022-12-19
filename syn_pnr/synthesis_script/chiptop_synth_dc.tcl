@@ -122,18 +122,18 @@ analyze -library WORK -format sverilog "../hdl/Memory/mmu.sv"
 ####### Loads DW files ##########
 #################################
 
-set modules {
-    "DW_fp_sqrt_inst"
-    "DW_fp_addsub_inst"
-    "DW_fp_cmp_inst"
-    "DW_fp_div_inst"
-    "DW_fp_mult_inst"
-    "DW_fp_flt2i_inst"
-    "DW_fp_i2flt_inst"
-    "DW_fp_mac_inst"
-}
-puts "analyzing designware stuff"
-analyze -library WORK -format sverilog "../hdl/dw_dependancies/DW_fp.v"
+# set modules {
+#     "DW_fp_sqrt_inst"
+#     "DW_fp_addsub_inst"
+#     "DW_fp_cmp_inst"
+#     "DW_fp_div_inst"
+#     "DW_fp_mult_inst"
+#     "DW_fp_flt2i_inst"
+#     "DW_fp_i2flt_inst"
+#     "DW_fp_mac_inst"
+# }
+# puts "analyzing designware stuff"
+# analyze -library WORK -format sverilog "../hdl/dw_dependancies/DW_fp.v"
 
 #############################################################
 ####### Loads ibex_core/rtl and ibex_(module) files #########

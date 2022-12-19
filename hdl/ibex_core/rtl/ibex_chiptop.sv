@@ -58,106 +58,106 @@ mmu mmu(
     .ext_sram_write_o   (ext_sram_write)
 );
 
-// sqrt 
-logic [31:0] dw_sqrt_z;
-logic [7:0] dw_sqrt_status; 
+// // sqrt 
+// logic [31:0] dw_sqrt_z;
+// logic [7:0] dw_sqrt_status; 
 
-// add sub 
-logic [31:0] dw_addsub_z; 
-logic [7:0] dw_addsub_status; 
+// // add sub 
+// logic [31:0] dw_addsub_z; 
+// logic [7:0] dw_addsub_status; 
 
-// cmp 
-logic altb, agtb, aeqb, unordered; 
-logic [31:0] z0, z1; 
-logic [7:0] status; 
+// // cmp 
+// logic altb, agtb, aeqb, unordered; 
+// logic [31:0] z0, z1; 
+// logic [7:0] status; 
 
-// div 
-logic [31:0] dw_div_z; 
-logic [7:0] dw_div_status; 
+// // div 
+// logic [31:0] dw_div_z; 
+// logic [7:0] dw_div_status; 
 
-// mult 
-logic [31:0] dw_mult_z; 
-logic [7:0] dw_mult_status; 
+// // mult 
+// logic [31:0] dw_mult_z; 
+// logic [7:0] dw_mult_status; 
 
-// flt2i
-logic [31:0] dw_flt2i_z; 
-logic [7:0] dw_flt2i_status; 
+// // flt2i
+// logic [31:0] dw_flt2i_z; 
+// logic [7:0] dw_flt2i_status; 
 
-// i2flt 
-logic [31:0] dw_i2flt_z; 
-logic [7:0] dw_i2flt_status; 
+// // i2flt 
+// logic [31:0] dw_i2flt_z; 
+// logic [7:0] dw_i2flt_status; 
 
-// mac 
-logic [31:0] dw_mac_z; 
-logic [7:0] dw_mac_status; 
-
-
-// Designware Section 
-DW_fp_sqrt_inst DW_fp_sqrt_inst(
-    .inst_a(32'b11111111111111111111111111111111), 
-    .inst_rnd(3'b111), 
-    .z_inst(dw_sqrt_z), 
-    .status_inst(dw_sqrt_status)
-); 
-
-DW_fp_addsub_inst DW_fp_addsub_inst(
-    .inst_a(32'b11111111111111111111111111111111),
-    .inst_b(32'b11111111111111111111111111111111), 
-    .inst_rnd(3'b111), 
-    .inst_op(1'b0),
-    .z_inst(dw_addsub_z), 
-    .status_inst(dw_addsub_status) 
-); 
-
-DW_fp_cmp_inst DW_fp_cmp_inst(
-    .inst_a(32'b11111111111111111111111111111111),
-    .inst_b(32'b11111111111111111111111111111111), 
-    .inst_zctr(1'b0), 
-    .altb_inst(altb), .agtb_inst(agtb), .aeqb_inst(aeqb), .unordered_inst(unordered),
-    .z0_inst(z0), .z1_inst(z1), 
-    .status0_inst(status) 
-);
-
-DW_fp_div_inst DW_fp_div_inst(
-    .inst_a(32'b11111111111111111111111111111111), 
-    .inst_b(32'b11111111111111111111111111111111), 
-    .inst_rnd(3'b111), 
-    .z_inst(dw_div_z), 
-    .status_inst(dw_div_status)
-); 
-
-DW_fp_mult_inst DW_fp_mult_inst(
-    .inst_a(32'b11111111111111111111111111111111), 
-    .inst_b(32'b11111111111111111111111111111111), 
-    .inst_rnd(3'b111), 
-    .z_inst(dw_mult_z), 
-    .status_inst(dw_mult_status)
-); 
-
-DW_fp_flt2i_inst DW_fp_flt2i_inst(
-    .inst_a(32'b11111111111111111111111111111111), 
-    .inst_rnd(3'b111), 
-    .z_inst(dw_flt2i_z), 
-    .status_inst(dw_flt2i_status)
-);
-
-DW_fp_i2flt_inst DW_fp_i2flt_inst(
-    .inst_a(32'b11111111111111111111111111111111), 
-    .inst_rnd(3'b111), 
-    .z_inst(dw_i2flt_z), 
-    .status_inst(dw_i2flt_status)
-); 
-
-DW_fp_mac_inst DW_fp_mac_inst(
-    .inst_a(32'b11111111111111111111111111111111), 
-    .inst_b(32'b11111111111111111111111111111111), 
-    .inst_c(32'b11111111111111111111111111111111), 
-    .inst_rnd(3'b111), 
-    .z_inst(dw_mac_z), 
-    .status_inst(dw_mac_status)
+// // mac 
+// logic [31:0] dw_mac_z; 
+// logic [7:0] dw_mac_status; 
 
 
-); 
+// // Designware Section 
+// DW_fp_sqrt_inst DW_fp_sqrt_inst(
+//     .inst_a(32'b11111111111111111111111111111111), 
+//     .inst_rnd(3'b111), 
+//     .z_inst(dw_sqrt_z), 
+//     .status_inst(dw_sqrt_status)
+// ); 
+
+// DW_fp_addsub_inst DW_fp_addsub_inst(
+//     .inst_a(32'b11111111111111111111111111111111),
+//     .inst_b(32'b11111111111111111111111111111111), 
+//     .inst_rnd(3'b111), 
+//     .inst_op(1'b0),
+//     .z_inst(dw_addsub_z), 
+//     .status_inst(dw_addsub_status) 
+// ); 
+
+// DW_fp_cmp_inst DW_fp_cmp_inst(
+//     .inst_a(32'b11111111111111111111111111111111),
+//     .inst_b(32'b11111111111111111111111111111111), 
+//     .inst_zctr(1'b0), 
+//     .altb_inst(altb), .agtb_inst(agtb), .aeqb_inst(aeqb), .unordered_inst(unordered),
+//     .z0_inst(z0), .z1_inst(z1), 
+//     .status0_inst(status) 
+// );
+
+// DW_fp_div_inst DW_fp_div_inst(
+//     .inst_a(32'b11111111111111111111111111111111), 
+//     .inst_b(32'b11111111111111111111111111111111), 
+//     .inst_rnd(3'b111), 
+//     .z_inst(dw_div_z), 
+//     .status_inst(dw_div_status)
+// ); 
+
+// DW_fp_mult_inst DW_fp_mult_inst(
+//     .inst_a(32'b11111111111111111111111111111111), 
+//     .inst_b(32'b11111111111111111111111111111111), 
+//     .inst_rnd(3'b111), 
+//     .z_inst(dw_mult_z), 
+//     .status_inst(dw_mult_status)
+// ); 
+
+// DW_fp_flt2i_inst DW_fp_flt2i_inst(
+//     .inst_a(32'b11111111111111111111111111111111), 
+//     .inst_rnd(3'b111), 
+//     .z_inst(dw_flt2i_z), 
+//     .status_inst(dw_flt2i_status)
+// );
+
+// DW_fp_i2flt_inst DW_fp_i2flt_inst(
+//     .inst_a(32'b11111111111111111111111111111111), 
+//     .inst_rnd(3'b111), 
+//     .z_inst(dw_i2flt_z), 
+//     .status_inst(dw_i2flt_status)
+// ); 
+
+// DW_fp_mac_inst DW_fp_mac_inst(
+//     .inst_a(32'b11111111111111111111111111111111), 
+//     .inst_b(32'b11111111111111111111111111111111), 
+//     .inst_c(32'b11111111111111111111111111111111), 
+//     .inst_rnd(3'b111), 
+//     .z_inst(dw_mac_z), 
+//     .status_inst(dw_mac_status)
+
+
+// ); 
 
 ibex_top #(
     .PMPEnable        ( 0                                ),
