@@ -67,7 +67,7 @@ ibex_top #(
     .RV32M            ( ibex_pkg::RV32MFast              ),
     .RV32B            ( ibex_pkg::RV32BNone              ),
     .RegFile          ( ibex_pkg::RegFileFF              ),
-    .ICache           ( 1                                ),
+    .ICache           ( 0                                ),
     .ICacheECC        ( 0                                ),
     .ICacheScramble   ( 0                                ),
     .BranchPrediction ( 0                                ),
