@@ -67,7 +67,15 @@ package ibex_pkg;
     OPCODE_BRANCH   = 7'h63,
     OPCODE_JALR     = 7'h67,
     OPCODE_JAL      = 7'h6f,
-    OPCODE_SYSTEM   = 7'h73
+    OPCODE_SYSTEM   = 7'h73,
+    OPCODE_F_LOAD   = 7'b0000111,  // 'h7 
+    OPCODE_F_STORE  = 7'b0100111,  // 'h27
+    OPCODE_F_ADD    = 7'b1000011,  // 'h43 
+    OPCODE_F_SUB    = 7'b1000111,  // 'h47
+    OPCODE_F_N_SUB  = 7'b1001011,  // 'h4B
+    OPCODE_F_N_ADD  = 7'b1001111,  // 'h4F 
+    OPCODE_F        = 7'b1010011   // 'h53
+
   } opcode_e;
 
 
