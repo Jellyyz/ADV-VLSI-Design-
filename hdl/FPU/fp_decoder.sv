@@ -6,8 +6,8 @@ import ibex_pkg::*;
 
 
 module FPU_decoder(
-
-    output fpu_op_e f_opcode, 
+    input logic [31:0] instr, 
+    output fpu_op_e f_opcode 
 
 
 
