@@ -36,8 +36,8 @@
 // MODIFIED: 
 //
 //-----------------------------------------------------------------------------
-
-  function automatic [(32+1)/2-1 : 0] DWF_sqrt_uns;
+  
+  function [(32+1)/2-1 : 0] DWF_sqrt_uns;
     // Function to compute the unsigned square root
     
     // synopsys map_to_operator SQRT_UNS_OP
@@ -69,7 +69,7 @@
   endfunction // DWF_sqrt_uns
 
   
-  function automatic [(32+1)/2-1 : 0] DWF_sqrt_tc;
+  function [(32+1)/2-1 : 0] DWF_sqrt_tc;
     // Function to compute the signed square root
     
     // synopsys map_to_operator SQRT_TC_OP

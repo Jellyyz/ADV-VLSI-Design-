@@ -15,7 +15,7 @@
 // 9 - qNaN
 
 package FPU_class_types; 
-typedef enum {
+typedef enum logic [9:0]{
     N_INF = 10'b0000000001, 
     N_NORMAL= 10'b0000000010, 
     N_SUBNORMAL = 10'b0000000100,
@@ -40,7 +40,8 @@ logic sign;
 logic [7:0] exponent; 
 logic [24:0] mantissa; 
 logic expAllOne, expAllZero, mantissaZero, d1;
-fclass_enum debug_out;
+
+// fclass_enum debug_out;
 
 // spread out the input number to start classifying them 
 assign sign = f_num[31]; 
@@ -64,6 +65,6 @@ assign f_num_class[9] =         expAllOne                 & ~mantissaZero & d1;
 // bits [31:10] are hard coded to 0 
 assign f_num_class[31:10] = 21'b0; 
 
-assign out_debug = fclass_enum'(f_num_class);
+// assign out_debug = fclass_enum'(f_num_class);
 
 endmodule 

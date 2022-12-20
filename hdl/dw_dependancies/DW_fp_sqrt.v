@@ -66,9 +66,6 @@
 // 4/25/2007  Kyung-Nam  (z0703-SP2), Corrected DW_fp_sqrt(-0) = -0
 //
 //-----------------------------------------------------------------------------
-
-`include "DW_sqrt_function.inc"
-
 module DW_fp_sqrt (a, rnd, z, status);
 
   parameter integer sig_width = 23;      // RANGE 2 TO 253
@@ -222,7 +219,7 @@ endfunction
   reg Movf;
   reg NegInput;
 
-  
+  `include "DW_sqrt_function.inc"
 
   always @(a or rnd) begin : a1000_PROC
     

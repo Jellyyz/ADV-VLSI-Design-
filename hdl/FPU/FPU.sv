@@ -1,4 +1,4 @@
-import ibex_pkg::*;
+import ibex_fp_pkg::*;
 
 module ibex_FPU(
     // Clock input
@@ -22,13 +22,13 @@ module ibex_FPU(
     // Address of register in floating point register file to write result to
     output  logic [4:0]     fp_regfile_addr_o,
     // Write enable signal for floating point register file
-    output                  fp_regfile_write_o,
+    output   logic          fp_regfile_write_o,
     // Result of floating point operation to be written to integer register file
     output  logic [31:0]    int_regfile_wdata_o,
     // Address of register in integer register file to write result to
     output  logic [4:0]     int_regfile_addr_o,
     // Write enable signal for integer register file
-    output                  int_regfile_write_o
+    output   logic          int_regfile_write_o
 );
 
 // Intermediate signals and status flags for square root operation
@@ -50,8 +50,7 @@ logic [31:0] fpcmp_op_b;
 logic fp_cmp_rs1_gt_rs2, fp_cmp_rs1_eq_rs2, fp_cmp_rs1_lt_rs2;
 logic [31:0] min_of_rs1_rs2;
 logic [31:0] max_of_rs1_rs2;
-// Indicates if one of the operands is NaN
-logic fp_cmp_NaN;
+logic fp_cmp_NaN;// Indicates if one of the operands is NaN
 logic [7:0] fpcmp_status;
 
 // Intermediate signals and status flags for multiply operation
@@ -101,7 +100,6 @@ assign div_op_a     = rs1_i;
 assign div_op_b     = rs2_i;
 assign mac_op_a     = rs1_i;
 assign mac_op_b     = rs2_i;
-assign mac_op_c     = rs3_i;
 assign fpclass_op_a = rs1_i;
 assign fp2int_op_a  = rs1_i;
 assign int2fp_op_a  = rs1_int_i;
@@ -117,10 +115,7 @@ function void set_defaults();
     int_regfile_addr_o      = rd_addr_i;
     int_regfile_write_o     = 1'b0;
     add_sub_select          = 1'b0;
-
-    mac_op_a                = rs1;
-    mac_op_b                = rs2;
-    mac_op_c                = rs3;
+    mac_op_c                = rs3_i;
 endfunction
 
 
@@ -176,13 +171,13 @@ always_comb begin
 
         FPU_MSUB: begin
             fp_regfile_write_o      = 1'b1;
-            mac_op_c                = {~rs3[31], rs3[30:0]};
+            mac_op_c                = {~rs3_i[31], rs3_i[30:0]};
             fp_regfile_wdata_o      = mac_result;
         end
 
         FPU_NMSUB: begin
             fp_regfile_write_o      = 1'b1;
-            mac_op_c                = {~rs3[31], rs3[30:0]};
+            mac_op_c                = {~rs3_i[31], rs3_i[30:0]};
             fp_regfile_wdata_o      = {~mac_result[31], mac_result[30:0]};
         end
 
@@ -211,17 +206,17 @@ always_comb begin
     
         FPU_SGNJ: begin
             fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {rs2[31], rs1[30:0]};
+            fp_regfile_wdata_o      = {rs2_i[31], rs1_i[30:0]};
         end
 
         FPU_SGNJ_N: begin//negated sign-injection
             fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {~rs2[31], rs1[30:0]};
+            fp_regfile_wdata_o      = {~rs2_i[31], rs1_i[30:0]};
         end 
         
         FPU_SGNJ_X: begin//xor sign-injection
             fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {rs2[31]^rs1[31], rs1[30:0]};
+            fp_regfile_wdata_o      = {rs2_i[31]^rs1_i[31], rs1_i[30:0]};
         end
 
         FPU_MOVE_INT2FLOAT: begin
@@ -236,17 +231,17 @@ always_comb begin
 
         FPU_CMP_EQ: begin
             fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {31{1'b0}, fp_cmp_rs1_eq_rs2};
+            fp_regfile_wdata_o      = {31'h0, fp_cmp_rs1_eq_rs2};
         end
 
         FPU_CMP_LT: begin
             fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {31{1'b0}, fp_cmp_rs1_lt_rs2};
+            fp_regfile_wdata_o      = {31'h0, fp_cmp_rs1_lt_rs2};
         end
 
         FPU_CMP_LE: begin
             fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {31{1'b0}, fp_cmp_rs1_lt_rs2|fp_cmp_rs1_eq_rs2};
+            fp_regfile_wdata_o = {31'h0, fp_cmp_rs1_lt_rs2|fp_cmp_rs1_eq_rs2};
         end
 
         FCLASS: begin
@@ -254,7 +249,7 @@ always_comb begin
             fp_regfile_wdata_o      = fpclass_result;
         end
 
-        FPNOP: begin
+        FPU_NOP: begin
             set_defaults();
         end
 
@@ -322,14 +317,13 @@ DW_fp_i2flt_inst DW_fp_i2flt_inst(
     .status_inst(int2fp_status)
 ); 
 
-DW_fp_i2flt_inst DW_fp_i2flt_inst_unsigned #(
+DW_fp_i2flt_inst #(
     .isign(1'b0)
-)
-(
+) DW_fp_i2flt_inst_unsigned(
     .inst_a(int2fp_op_a), 
     .inst_rnd(fp_rounding_mode), 
     .z_inst(int2fp_result_unsigned), 
-    .status_inst(int2fp_status)
+    .status_inst(int2fp_status_unsigned)
 );
 
 DW_fp_mac_inst DW_fp_mac_inst(
@@ -342,7 +336,7 @@ DW_fp_mac_inst DW_fp_mac_inst(
 );
 
 FPU_classifer FPU_classifer_inst(
-    .f_num (rs1)
+    .f_num (rs1),
     .f_num_class (fpclass_result)
 );
 
