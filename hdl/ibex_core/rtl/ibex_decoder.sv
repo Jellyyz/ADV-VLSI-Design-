@@ -239,9 +239,6 @@ module ibex_decoder #(
     // New
     rf_we_int             = 1'b0;
     rf_we_fp              = 1'b0;
-    rf_fp_ren_a_o            = 1'b0;
-    rf_fp_ren_b_o            = 1'b0;
-    rf_fp_ren_c_o            = 1'b0;
     rf_sel_fp_a_o            = 1'b0; // Default to int regfile
     rf_sel_fp_b_o            = 1'b0; // Default to int regfile
     rf_lsu_to_fp_o       = 1'b0;
@@ -707,7 +704,7 @@ module ibex_decoder #(
         rf_ren_a_o         = 1'b1;
         
         // rs2 is fp reg 
-        rf_fp_ren_b_o         = 1'b1;
+        rf_ren_b_o         = 1'b1;
         // select output from FP regfile for rs2!
         rf_sel_fp_b_o         = 1'b1;
 
@@ -759,7 +756,7 @@ module ibex_decoder #(
 
       // New
       rf_we_int       = 1'b0;
-      rf_fp_we_o      = 1'b0;
+      rf_we_fp        = 1'b0;
     end
   end
 

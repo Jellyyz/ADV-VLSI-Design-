@@ -841,7 +841,8 @@ module ibex_id_stage #(
                 // When single-cycle multiply is configured mul can finish in the first cycle so
                 // only enter MULTI_CYCLE state if a result isn't immediately available
                 id_fsm_d      = MULTI_CYCLE;
-                rf_we_raw     = 1'b0;
+                // rf_we_raw     = 1'b0;
+                rf_we_int_raw     = 1'b0;
                 stall_multdiv = 1'b1;
               end
             end
@@ -871,7 +872,8 @@ module ibex_id_stage #(
             alu_multicycle_dec: begin
               stall_alu     = 1'b1;
               id_fsm_d      = MULTI_CYCLE;
-              rf_we_raw     = 1'b0;
+              // rf_we_raw     = 1'b0;
+              rf_we_int_raw     = 1'b0;
             end
             // floating point op active mode?
             default: begin

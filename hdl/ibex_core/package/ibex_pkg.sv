@@ -67,6 +67,13 @@ package ibex_pkg;
     OPCODE_BRANCH   = 7'h63,
     OPCODE_JALR     = 7'h67,
     OPCODE_JAL      = 7'h6f,
+    OPCODE_LOAD_FP  = 7'h07,
+    OPCODE_STORE_FP = 7'h27,
+    OPCODE_FMADD    = 7'h43,
+    OPCODE_FMSUB    = 7'h47,
+    OPCODE_FNMSUB   = 7'h4b,
+    OPCODE_FNMADD   = 7'h4f,
+    OPCODE_OP_FP    = 7'h53,
     OPCODE_SYSTEM   = 7'h73
   } opcode_e;
 

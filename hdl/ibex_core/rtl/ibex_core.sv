@@ -83,8 +83,8 @@ module ibex_core import ibex_pkg::*; #(
 
   output logic                         rf_we_int_wb_o,
   output logic                         rf_we_fp_wb_o,
-  output logic [4:0]                   rf_raddr_c_o,
-  input  logic [RegFileDataWidth-1:0]  rf_rdata_c_ecc_i,
+  // output logic [4:0]                   rf_raddr_c_o,
+  // input  logic [RegFileDataWidth-1:0]  rf_rdata_c_ecc_i,
 
 
   // RAMs interface
@@ -233,8 +233,8 @@ module ibex_core import ibex_pkg::*; #(
   logic        rf_ren_a;
   logic        rf_ren_b;
 
-  logic [4:0]  rf_raddr_c;
-  logic [31:0] rf_rdata_a;
+  // logic [4:0]  rf_raddr_c;
+  // logic [31:0] rf_rdata_c;
   logic        rf_sel_fp_a;
   logic        rf_sel_fp_b;
   logic        rf_lsu_to_fp;
@@ -644,9 +644,11 @@ module ibex_core import ibex_pkg::*; #(
     .rf_ren_a_o        (rf_ren_a),
     .rf_ren_b_o        (rf_ren_b),
 
-    .rf_raddr_c_o       (rf_raddr_c),
-    .rf_rdata_c_i       (rd_rdata_c),
-    .rf_ren_c_o         (rf_ren_c),
+    .rf_raddr_c_o       (),
+    // .rf_raddr_c_o       (rf_raddr_c),
+    .rf_rdata_c_i       (),
+    // .rf_rdata_c_i       (rd_rdata_c),
+    // .rf_ren_c_o         (rf_ren_c),
     .rf_sel_fp_a_o      (rf_sel_fp_a),
     .rf_sel_fp_b_o      (rf_sel_fp_b),
     .rf_lsu_to_fp_o     (rf_lsu_to_fp),
@@ -658,7 +660,7 @@ module ibex_core import ibex_pkg::*; #(
     .rf_rd_b_wb_match_o(rf_rd_b_wb_match),
 
     .rf_we_int_id_o     (rf_we_int_id),
-    .rf_we_fp_id_o      (rf_we_fp_id)
+    .rf_we_fp_id_o      (rf_we_fp_id),
 
     .rf_waddr_wb_i    (rf_waddr_wb),
     .rf_wdata_fwd_wb_i(rf_wdata_fwd_wb),
