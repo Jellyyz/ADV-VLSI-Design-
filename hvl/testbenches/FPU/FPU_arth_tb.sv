@@ -79,23 +79,33 @@ initial begin
     int_regfile[14] = 32'd23;
     int_regfile[15] = 32'd23;
 
-    fp_operation(FPU_ADD, 5'h2, 5'h1, 5'h3);
-    fp_operation(FPU_SUB, 5'h2, 5'h1, 5'h4);
-    fp_operation(FPU_ADD, 5'h3, 5'h4, 5'h5);
-    fp_operation(FPU_MUL, 5'h2, 5'h2, 5'h6);
-    fp_operation(FPU_DIV, 5'h5, 5'h2, 5'h7);
-    fp_operation(FPU_SQRT, 5'h6, 5'h0, 5'h8);
-    fp_operation(FPU_MIN, 5'h1, 5'h2, 5'h9);
-    fp_operation(FPU_MAX, 5'h1, 5'h2, 5'ha);
+    fp_operation(FPU_ADD, 5'h2, 5'h1, 5'h0, 5'h3);
+    fp_operation(FPU_SUB, 5'h2, 5'h1, 5'h0, 5'h4);
+    fp_operation(FPU_ADD, 5'h3, 5'h4, 5'h0, 5'h5); //h5 = 20
+    fp_operation(FPU_MUL, 5'h2, 5'h2, 5'h0, 5'h6);
+    fp_operation(FPU_DIV, 5'h5, 5'h2, 5'h0, 5'h7);
+    fp_operation(FPU_SQRT, 5'h6, 5'h0, 5'h0, 5'h8);
+    fp_operation(FPU_MIN, 5'h1, 5'h2, 5'h0, 5'h9);
+    fp_operation(FPU_MAX, 5'h1, 5'h2, 5'h0, 5'ha);
 
+    fp_operation(FPU_MADD, 5'h2, 5'h2, 5'h5, 5'hb);
+    fp_operation(FPU_MSUB, 5'h2, 5'h2, 5'h5, 5'hc);
+    fp_operation(FPU_NMADD, 5'h2, 5'h2, 5'h5, 5'hd);
+    fp_operation(FPU_NMSUB, 5'h2, 5'h2, 5'h5, 5'he);
+
+    fp_operation(FPU_INT2FLOAT, 5'h2, 5'h2, 5'h5, 5'hf);
+    fp_operation(FPU_FLOAT2INT, 5'hb, 5'h2, 5'h5, 5'hf);
+    
 
     $finish;
 end
 
-task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2_addr, input [4:0] rd_addr);
+task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2_addr, input [4:0] rs3_addr, input [4:0] rd_addr);
     fp_op = fp_op_in;
     rs1_i = fp_regfile[rs1_addr];
+    rs1_int_i = int_regfile[rs1_addr];
     rs2_i = fp_regfile[rs2_addr];
+    rs3_i = fp_regfile[rs3_addr];
     rd_addr_i = rd_addr;
 
     @(posedge clk_i); 
@@ -103,10 +113,12 @@ task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2
         $display("Writing to %f register file", shortreal'(fp_regfile_wdata_o));
         fp_regfile[fp_regfile_addr_o] <=  fp_regfile_wdata_o;
     end
+    if(int_regfile_write_o) begin
+        $display("Writing to int reg file");
+        int_regfile[int_regfile_addr_o]<= int_regfile_wdata_o;
+    end
     fp_op=FPU_NOP;
     @(posedge clk_i);
-
-
 endtask
 
 endmodule

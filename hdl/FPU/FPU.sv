@@ -189,7 +189,7 @@ always_comb begin
         end
 
         FPU_FLOAT2INT: begin
-            int_regfile_wdata_o     = 1'b1;
+            int_regfile_write_o     = 1'b1;
             int_regfile_wdata_o     = fp2int_result;
         end
 
@@ -201,7 +201,7 @@ always_comb begin
 
         //TODO: Figure out what the best way to do unsigned flt2int conversion - or not do it at all lol
         FPU_FLOAT2INT_U: begin
-            int_regfile_wdata_o     = 1'b1;
+            int_regfile_write_o     = 1'b1;
             int_regfile_wdata_o     = fp2int_result;
         end
     

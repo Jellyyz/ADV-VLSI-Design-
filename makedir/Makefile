@@ -11,7 +11,7 @@ ibex_tb: ../hdl/ibex_core/rtl/ibex_chiptop.sv full_sim_tb.scr
 		+lint=ALL +lint=TFIPC-L -debug_access+all  -fsdb +memcbk
 
 fpu_tb: ../hvl/testbenches/FPU/FPU_arth_tb.sv fpu_sim.scr
-	vcs -sv=2012 +lint=all,noSVA-UA,noNS,noSVA-AECASR,noSVA-FINUA -kdb -timescale=10ns/1ns -full64 -top FPU_arth_tb -f fpu_sim.scr -o $@ \
+	vcs -gui -sv=2012 +lint=all,noSVA-UA,noNS,noSVA-AECASR,noSVA-FINUA -kdb -timescale=10ns/1ns -full64 -top FPU_arth_tb -f fpu_sim.scr -o $@ \
 		-xlrm uniq_prior_final -debug_access+r -kdb \
 		+lint=TFIPC-L -debug_access+all  -fsdb +memcbk
 
