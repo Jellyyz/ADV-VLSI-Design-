@@ -43,7 +43,7 @@ initial begin
 
     clk_i = 1'b1;
 
-    fp_rounding_mode = 3'b000;
+    fp_rounding_mode = 3'b001;
 
     fp_regfile[0] = shortreal'(0.0);
     fp_regfile[1] = 32'h4023d70a; //2.56
@@ -92,7 +92,7 @@ initial begin
     $finish;
 end
 
-task fp_operation(input fp_op_in, input [4:0] rs1_addr, input [4:0] rs2_addr, input [4:0] rd_addr);
+task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2_addr, input [4:0] rd_addr);
     fp_op = fp_op_in;
     rs1_i = fp_regfile[rs1_addr];
     rs2_i = fp_regfile[rs2_addr];
