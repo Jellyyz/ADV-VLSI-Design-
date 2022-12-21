@@ -20,9 +20,21 @@ logic [4:0]     fp_regfile_addr_o;
 logic [31:0]    int_regfile_wdata_o;
 logic [4:0]     int_regfile_addr_o;
 logic int_regfile_write_o, fp_regfile_write_o;
-
+logic [31:0]    instr; 
 ibex_FPU F_PUXY (.*);
 
+// fpu_op_e fp_op_in; 
+// FPU_decoder FPU_decoder(
+
+//     .instr(instr), 
+//     .f_opcode(fp_op_in) 
+// ); 
+
+
+
+logic [16][31:0] fp_regfile;
+
+logic [16][31:0] int_regfile;
 
 initial begin
 
@@ -80,7 +92,7 @@ initial begin
     $finish;
 end
 
-task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2_addr, input [4:0] rd_addr);
+task fp_operation(input fp_op_in, input [4:0] rs1_addr, input [4:0] rs2_addr, input [4:0] rd_addr);
     fp_op = fp_op_in;
     rs1_i = fp_regfile[rs1_addr];
     rs2_i = fp_regfile[rs2_addr];
