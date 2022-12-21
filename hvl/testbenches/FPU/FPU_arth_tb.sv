@@ -6,7 +6,7 @@ logic clk_i;
 
 always #1 clk_i = clk_i === 1'b0;
 
-logic [15:0] [31:0] int_regfile ;
+logic [15:0] [31:0] int_regfile;
 logic [15:0] [31:0] fp_regfile; 
 logic [2:0]     fp_rounding_mode;
 fpu_op_e        fp_op;
@@ -30,11 +30,6 @@ ibex_FPU F_PUXY (.*);
 //     .f_opcode(fp_op_in) 
 // ); 
 
-
-
-logic [16][31:0] fp_regfile;
-
-logic [16][31:0] int_regfile;
 
 initial begin
 

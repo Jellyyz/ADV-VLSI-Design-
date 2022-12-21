@@ -36,16 +36,16 @@
 // MODIFIED: 
 //
 //-----------------------------------------------------------------------------
-  
-  function [(32+1)/2-1 : 0] DWF_sqrt_uns;
+
+  function [(50+1)/2-1 : 0] DWF_sqrt_uns;
     // Function to compute the unsigned square root
     
     // synopsys map_to_operator SQRT_UNS_OP
     // synopsys return_port_name ROOT
 
-    input [32-1 : 0] A;
+    input [50-1 : 0] A;
 
-    reg [(32+1)/2-1 : 0] ROOT_v;
+    reg [(50+1)/2-1 : 0] ROOT_v;
     reg A_x;
     integer i;
 
@@ -53,11 +53,11 @@
       // synopsys translate_off
       A_x = ^A;
       if (A_x === 1'bx) begin
-	ROOT_v = {(32+1)/2{1'bx}};
+	ROOT_v = {(50+1)/2{1'bx}};
       end
       else begin
-	ROOT_v = {(32+1)/2{1'b0}};
-	for (i = (32+1)/2-1; i >= 0; i = i-1) begin
+	ROOT_v = {(50+1)/2{1'b0}};
+	for (i = (50+1)/2-1; i >= 0; i = i-1) begin
 	  ROOT_v[i] = 1'b1;
 	  if (ROOT_v*ROOT_v > {1'b0,A})
 	    ROOT_v[i] = 1'b0;
@@ -69,26 +69,26 @@
   endfunction // DWF_sqrt_uns
 
   
-  function [(32+1)/2-1 : 0] DWF_sqrt_tc;
+  function [(50+1)/2-1 : 0] DWF_sqrt_tc;
     // Function to compute the signed square root
     
     // synopsys map_to_operator SQRT_TC_OP
     // synopsys return_port_name ROOT
 
-    input [32-1 : 0] A;
+    input [50-1 : 0] A;
 
-    reg [(32+1)/2-1 : 0] ROOT_v;
-    reg [32-1 : 0] A_v, A_x;
+    reg [(50+1)/2-1 : 0] ROOT_v;
+    reg [50-1 : 0] A_v, A_x;
     integer i;
 
     begin
       // synopsys translate_off
       A_x = ^A;
       if (A_x === 1'bx) begin
-	ROOT_v = {(32+1)/2{1'bx}};
+	ROOT_v = {(50+1)/2{1'bx}};
       end
       else begin
-	if (A[32-1] == 1'b1) A_v = ~A + 1'b1;
+	if (A[50-1] == 1'b1) A_v = ~A + 1'b1;
 	else A_v = A;
 	ROOT_v = DWF_sqrt_uns (A_v);
       end
