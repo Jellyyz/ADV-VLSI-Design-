@@ -93,6 +93,7 @@ logic [7:0] dw_mac_status;
 
 
 // Designware Section 
+/*
 DW_fp_sqrt_inst DW_fp_sqrt_inst(
     .inst_a(32'b11111111111111111111111111111111), 
     .inst_rnd(3'b111), 
@@ -158,6 +159,8 @@ DW_fp_mac_inst DW_fp_mac_inst(
 
 
 ); 
+
+*/
 
 ibex_top #(
     .PMPEnable        ( 0                                ),

@@ -6,6 +6,8 @@ logic clk_i;
 
 always #1 clk_i = clk_i === 1'b0;
 
+logic [15:0] [31:0] int_regfile ;
+logic [15:0] [31:0] fp_regfile; 
 logic [2:0]     fp_rounding_mode;
 fpu_op_e        fp_op;
 logic [31:0]    rs1_i;
@@ -21,11 +23,14 @@ logic int_regfile_write_o, fp_regfile_write_o;
 
 ibex_FPU F_PUXY (.*);
 
-logic [16][31:0] fp_regfile;
-
-logic [16][31:0] int_regfile;
 
 initial begin
+
+    $fsdbDumpfile("ibex_fpu_comp");
+    $fsdbDumpvars();
+
+    clk_i = 1'b1;
+
     fp_rounding_mode = 3'b000;
 
     fp_regfile[0] = shortreal'(0.0);
@@ -62,11 +67,15 @@ initial begin
     int_regfile[14] = 32'd23;
     int_regfile[15] = 32'd23;
 
-    fp_operation(FPU_ADD, 5'h1, 5'h2, 5'h3);
-    fp_operation(FPU_SUB, 5'h1, 5'h2, 5'h4);
-    fp_operation(FPU_SUB, 5'h3, 5'h4, 5'h5);
-    fp_operation(FPU_MUL, 5'h1, 5'h2, 5'h6);
+    fp_operation(FPU_ADD, 5'h2, 5'h1, 5'h3);
+    fp_operation(FPU_SUB, 5'h2, 5'h1, 5'h4);
+    fp_operation(FPU_ADD, 5'h3, 5'h4, 5'h5);
+    fp_operation(FPU_MUL, 5'h2, 5'h2, 5'h6);
     fp_operation(FPU_DIV, 5'h5, 5'h2, 5'h7);
+    fp_operation(FPU_SQRT, 5'h6, 5'h0, 5'h8);
+    fp_operation(FPU_MIN, 5'h1, 5'h2, 5'h9);
+    fp_operation(FPU_MAX, 5'h1, 5'h2, 5'ha);
+
 
     $finish;
 end
@@ -79,8 +88,12 @@ task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2
 
     @(posedge clk_i); 
     if(fp_regfile_write_o) begin
-        fp_regfile[fp_regfile_addr_o] =  int_regfile_wdata_o;
+        $display("Writing to %f register file", shortreal'(fp_regfile_wdata_o));
+        fp_regfile[fp_regfile_addr_o] <=  fp_regfile_wdata_o;
     end
+    fp_op=FPU_NOP;
+    @(posedge clk_i);
+
 
 endtask
 

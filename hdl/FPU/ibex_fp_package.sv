@@ -13,7 +13,7 @@ typedef enum logic[5:0]{
     FPU_MADD,
     FPU_MSUB,
     FPU_NMADD,
-    FPU_NMADD,
+    FPU_NMSUB,
     
     FPU_INT2FLOAT,
     FPU_FLOAT2INT,

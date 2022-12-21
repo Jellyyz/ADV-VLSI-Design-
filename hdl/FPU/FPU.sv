@@ -130,6 +130,7 @@ always_comb begin
 
         FPU_SUB: begin
             fp_regfile_write_o      = 1'b1;
+            add_sub_select          = 1'b1;
             fp_regfile_wdata_o      = add_sub_result;
         end
 
@@ -336,7 +337,7 @@ DW_fp_mac_inst DW_fp_mac_inst(
 );
 
 FPU_classifer FPU_classifer_inst(
-    .f_num (rs1),
+    .f_num (rs1_i),
     .f_num_class (fpclass_result)
 );
 
