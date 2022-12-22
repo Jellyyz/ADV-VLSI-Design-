@@ -1,7 +1,7 @@
 +incdir+../hdl/dw_dependancies
 +incdir+../hdl/FPU
 
-
+../hdl/ibex_core/package/ibex_pkg.sv
 ../hdl/FPU/ibex_fp_package.sv
 
 
@@ -25,5 +25,6 @@
 ../hdl/dw_dependancies/DW_fp_sqrt.v
 
 ../hdl/FPU/FPU_classifier.sv
+../hdl/FPU/fp_decoder.sv
 ../hdl/FPU/FPU.sv
 ../hvl/testbenches/FPU/FPU_arth_tb.sv

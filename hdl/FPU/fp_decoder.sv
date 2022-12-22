@@ -1,19 +1,33 @@
-
-`include "ibex_fp_package.sv"
-`include "../ibex_core/rtl/ibex_pkg.sv"
 import ibex_fp_pkg::*; 
 import ibex_pkg::*; 
-
 
 module FPU_decoder(
     input logic [31:0] instr, 
     output fpu_op_e f_opcode 
-
-
-
 );
 
 
+typedef enum logic [6:0] {
+    OPCODE_LOAD     = 7'h03,
+    OPCODE_MISC_MEM = 7'h0f,
+    OPCODE_OP_IMM   = 7'h13,
+    OPCODE_AUIPC    = 7'h17,
+    OPCODE_STORE    = 7'h23,
+    OPCODE_OP       = 7'h33,
+    OPCODE_LUI      = 7'h37,
+    OPCODE_BRANCH   = 7'h63,
+    OPCODE_JALR     = 7'h67,
+    OPCODE_JAL      = 7'h6f,
+    OPCODE_SYSTEM   = 7'h73,
+    OPCODE_F_LOAD   = 7'b0000111,  // 'h7 
+    OPCODE_F_STORE  = 7'b0100111,  // 'h27
+    OPCODE_F_ADD    = 7'b1000011,  // 'h43 
+    OPCODE_F_SUB    = 7'b1000111,  // 'h47
+    OPCODE_F_N_SUB  = 7'b1001011,  // 'h4B
+    OPCODE_F_N_ADD  = 7'b1001111,  // 'h4F 
+    OPCODE_F        = 7'b1010011   // 'h53
+
+  } opcode_e;
 
 // declaration of glue logic variables 
 // Source/Destination register instruction index
@@ -31,20 +45,20 @@ logic [6:0] funct7;
 logic [2:0] funct3; 
 logic [4:0] op_rs2;
 
-opcode = opcode_e'(instr[6:0]); 
-funct7 = instr[31:25]; 
-funct3 = instr[14:12];
-op_rs2 = instr[24:20]; 
+assign opcode = opcode_e'(instr[6:0]); 
+assign funct7 = instr[31:25]; 
+assign funct3 = instr[14:12];
+assign op_rs2 = instr[24:20]; 
 
 always_comb begin
 
     unique case(opcode)
 
     OPCODE_F_LOAD:begin
-        ;
+        f_opcode = FPU_NOP;
     end 
     OPCODE_F_STORE:begin 
-        ; 
+        f_opcode = FPU_NOP; 
     end 
     OPCODE_F_ADD:begin
         f_opcode = FPU_MADD; 
@@ -53,47 +67,47 @@ always_comb begin
         f_opcode = FPU_MSUB;
     end 
     OPCODE_F_N_SUB:begin
-        f_opcode = FPU_NMADD;
+        f_opcode = FPU_NMSUB;
     end 
     OPCODE_F_N_ADD:begin
         f_opcode = FPU_NMADD;
     end 
     OPCODE_F:begin 
         unique case(funct7)
-            // F_ADD
+            // FPUADD
             7'b0000000:begin 
                 f_opcode = FPU_ADD; 
             end 
-            // F_SUB
+            // FPU_SUB
             7'b0000100:begin
                 f_opcode = FPU_SUB; 
             end 
-            // F_MUL 
+            // FPU_MUL 
             7'b0001000:begin
                 f_opcode = FPU_MUL; 
             end 
-            // F_DIV 
+            // FPU_DIV 
             7'b0001100:begin
-                f_opcode = F_DIV; 
+                f_opcode = FPU_DIV; 
             end 
-            // F_SQRT
+            // FPU_SQRT
             7'b0101100:begin
-                f_opcode = F_SQRT; 
+                f_opcode = FPU_SQRT; 
             end 
-            // F_SGNJ types
+            // FPU_SGNJ types
             7'b0010000:begin 
                 unique case(funct3)
                 //FSGNJ.S 
                 3'b000:begin 
-                    f_opcode = F_SGNJ; 
+                    f_opcode = FPU_SGNJ; 
                 end 
                 //FSGNJN.S
                 3'b001:begin 
-                    f_opcode = F_SGNJ_N; 
+                    f_opcode = FPU_SGNJ_N; 
                 end 
                 //FSGNJX.S 
                 3'b010:begin 
-                    f_opcode = F_SGNJ_X; 
+                    f_opcode = FPU_SGNJ_X; 
                 end 
 
                 endcase 
@@ -115,11 +129,11 @@ always_comb begin
             7'b1100000:begin 
                 unique case(op_rs2)
                 // FCVT.W.S
-                3'b00000:begin 
+                5'b00000:begin 
                     f_opcode = FPU_FLOAT2INT; 
                 end 
                 // FCVT.WU.S
-                3'b00001:begin 
+                5'b00001:begin 
                     f_opcode = FPU_FLOAT2INT_U;
                 end 
                 endcase 
@@ -138,7 +152,7 @@ always_comb begin
                 endcase
             end 
             // FEQ/FLT/FLE
-            7'b1010000:begin 
+            7'b1010000: begin 
                 unique case (funct3)
                 // FLE.S
                 3'b000:begin 
@@ -163,7 +177,7 @@ always_comb begin
                     end 
                     // FCVT.S.WU
                     5'b00001:begin 
-                        f_opcode = FPU_INT2FLOAT_Ul
+                        f_opcode = FPU_INT2FLOAT_U;
                     end 
                 
                 endcase

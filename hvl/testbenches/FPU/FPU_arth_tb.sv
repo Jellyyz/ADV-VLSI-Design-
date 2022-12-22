@@ -21,14 +21,18 @@ logic [31:0]    int_regfile_wdata_o;
 logic [4:0]     int_regfile_addr_o;
 logic int_regfile_write_o, fp_regfile_write_o;
 logic [31:0]    instr; 
+logic [31:0]    instr_rdata;
+
 ibex_FPU F_PUXY (.*);
 
-// fpu_op_e fp_op_in; 
-// FPU_decoder FPU_decoder(
+fpu_op_e fp_op_input; 
 
-//     .instr(instr), 
-//     .f_opcode(fp_op_in) 
-// ); 
+assign fp_op = fp_op_input;
+FPU_decoder FPU_decoder(
+
+    .instr(instr), 
+    .f_opcode(fp_op_input) 
+); 
 
 
 initial begin
@@ -70,10 +74,11 @@ initial begin
     int_regfile[10] = 32'd23;
     int_regfile[11] = 32'd23;
     int_regfile[12] = 32'd23;
-    int_regfile[13] = 32'd23;
+    int_regfile[13] = 32'hc001c0de;
     int_regfile[14] = 32'd23;
     int_regfile[15] = 32'd23;
 
+    /*
     fp_operation(FPU_ADD, 5'h2, 5'h1, 5'h0, 5'h3);
     fp_operation(FPU_SUB, 5'h2, 5'h1, 5'h0, 5'h4);
     fp_operation(FPU_ADD, 5'h3, 5'h4, 5'h0, 5'h5); //h5 = 20
@@ -85,18 +90,33 @@ initial begin
 
     fp_operation(FPU_MADD, 5'h2, 5'h2, 5'h5, 5'hb);
     fp_operation(FPU_MSUB, 5'h2, 5'h2, 5'h5, 5'hc);
-    fp_operation(FPU_NMADD, 5'h2, 5'h2, 5'h5, 5'hd);
+    fp_operation(FPU_NMADD, 5'h2, 5'h2, 5'h5, 5'hd); //-120
     fp_operation(FPU_NMSUB, 5'h2, 5'h2, 5'h5, 5'he);
-
+            
     fp_operation(FPU_INT2FLOAT, 5'h2, 5'h2, 5'h5, 5'hf);
     fp_operation(FPU_FLOAT2INT, 5'hb, 5'h2, 5'h5, 5'hf);
-    
+
+    fp_operation(FPU_SGNJ, 5'hd, 5'h2, 5'h0, 5'h7);
+    fp_operation(FPU_SGNJ_N, 5'hb, 5'h2, 5'h0, 5'h8);
+    fp_operation(FPU_SGNJ_X, 5'hd, 5'hd, 5'h0, 5'h9);
+
+    fp_operation(FPU_MOVE_INT2FLOAT, 5'hd, 5'h2, 5'h5, 5'h6);
+    fp_operation(FPU_MOVE_FLOAT2INT, 5'h2, 5'h2, 5'h5, 5'he);
+
+    fp_operation(FPU_CMP_EQ, 5'ha, 5'h2, 5'h5, 5'h3);
+    fp_operation(FPU_CMP_LT, 5'hb, 5'h2, 5'h5, 5'h4);
+    fp_operation(FPU_CMP_LE, 5'ha, 5'h2, 5'h5, 5'h5);
+
+
+    fp_operation(FCLASS, 5'hb, 5'h2, 5'h5, 5'hf);
+    */
+    #1;
+    execute_fp_instructions("fpu_instr.lst");
 
     $finish;
 end
 
 task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2_addr, input [4:0] rs3_addr, input [4:0] rd_addr);
-    fp_op = fp_op_in;
     rs1_i = fp_regfile[rs1_addr];
     rs1_int_i = int_regfile[rs1_addr];
     rs2_i = fp_regfile[rs2_addr];
@@ -112,8 +132,19 @@ task fp_operation(input fpu_op_e fp_op_in, input [4:0] rs1_addr, input [4:0] rs2
         $display("Writing to int reg file");
         int_regfile[int_regfile_addr_o]<= int_regfile_wdata_o;
     end
-    fp_op=FPU_NOP;
+    // fp_op=FPU_NOP;
     @(posedge clk_i);
 endtask
 
+
+
+int fd;
+task execute_fp_instructions( input string file_name);
+    fd = $fopen(file_name, "r");
+    while ($fscanf(fd,"%h",instr_rdata)==1) begin
+        $display("executing instruction: 0x%h",instr_rdata);
+        instr = instr_rdata;
+        fp_operation(fp_op_input, instr_rdata[19:15], instr_rdata[24:20], instr_rdata[31:27], instr_rdata[11:7]);
+    end
+endtask
 endmodule

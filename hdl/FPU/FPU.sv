@@ -231,23 +231,23 @@ always_comb begin
         end
 
         FPU_CMP_EQ: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {31'h0, fp_cmp_rs1_eq_rs2};
+            int_regfile_write_o      = 1'b1;
+            int_regfile_wdata_o      = {31'h0, fp_cmp_rs1_eq_rs2};
         end
 
         FPU_CMP_LT: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {31'h0, fp_cmp_rs1_lt_rs2};
+            int_regfile_write_o      = 1'b1;
+            int_regfile_wdata_o      = {31'h0, fp_cmp_rs1_lt_rs2};
         end
 
         FPU_CMP_LE: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o = {31'h0, fp_cmp_rs1_lt_rs2|fp_cmp_rs1_eq_rs2};
+            int_regfile_write_o      = 1'b1;
+            int_regfile_wdata_o = {31'h0, fp_cmp_rs1_lt_rs2|fp_cmp_rs1_eq_rs2};
         end
 
         FCLASS: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = fpclass_result;
+            int_regfile_write_o      = 1'b1;
+            int_regfile_wdata_o      = fpclass_result;
         end
 
         FPU_NOP: begin
