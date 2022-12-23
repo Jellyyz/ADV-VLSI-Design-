@@ -39,6 +39,14 @@ module ibex_ex_block #(
   input  logic                  multdiv_ready_id_i,
   input  logic                  data_ind_timing_i,
 
+  //FPU
+  input  logic [31:0]           fpu_operand_a_i,
+  input  logic [31:0]           fpu_operand_b_i,
+  input  logic [31:0]           fpu_operand_c_i,
+  input  logic [31:0]           fpu_integer_operand_i,
+  input  fpu_op_e               fpu_opcode_i,
+  input  logic [2:0]            fpu_rounding_mode_i,
+
   // intermediate val reg
   output logic [1:0]            imd_val_we_o,
   output logic [33:0]           imd_val_d_o[2],
@@ -54,8 +62,11 @@ module ibex_ex_block #(
 );
 
   import ibex_pkg::*;
+  import ibex_fp_pkg::*;
 
   logic [31:0] alu_result, multdiv_result;
+  // logic [31:0] dummy_fpu_output; //for int wdata from FPU, need to move this to outputs after I get that working
+  logic [31:0]           fpu_regfile_wdata;
 
   logic [32:0] multdiv_alu_operand_b, multdiv_alu_operand_a;
   logic [33:0] alu_adder_result_ext;
@@ -86,7 +97,18 @@ module ibex_ex_block #(
 
   assign alu_imd_val_q = '{imd_val_q_i[0][31:0], imd_val_q_i[1][31:0]};
 
-  assign result_ex_o  = multdiv_sel ? multdiv_result : alu_result;
+  // assign result_ex_o  = multdiv_sel ? multdiv_result : alu_result;
+  always_comb begin : result_ex_o_assignment
+    if(multdiv_sel) begin
+      result_ex_o = multdiv_result;
+    end
+    else begin
+      if(fpu_opcode_i != FPU_NOP)
+        result_ex_o = fpu_regfile_wdata;
+      else
+        result_ex_o = alu_result;
+    end
+  end
 
   // branch handling
   assign branch_decision_o  = alu_cmp_result;
@@ -131,6 +153,21 @@ module ibex_ex_block #(
     .result_o           (alu_result),
     .comparison_result_o(alu_cmp_result),
     .is_equal_result_o  (alu_is_equal_result)
+  );
+
+  /////////
+  // FPU //
+  /////////
+
+  ibex_FPU f_pu(
+    .clk_i                (clk_i),
+    .fp_rounding_mode     (fpu_rounding_mode_i),
+    .fp_op                (fpu_opcode_i),
+    .rs1_i                (fpu_operand_a_i),
+    .rs1_int_i            (fpu_integer_operand_i),
+    .rs2_i                (fpu_operand_b_i),
+    .rs3_i                (fpu_operand_c_i),
+    .fp_regfile_wdata_o   (fpu_regfile_wdata)
   );
 
   ////////////////

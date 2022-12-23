@@ -75,10 +75,21 @@ module ibex_core import ibex_pkg::*; #(
   output logic [4:0]                   rf_raddr_a_o,
   output logic [4:0]                   rf_raddr_b_o,
   output logic [4:0]                   rf_waddr_wb_o,
-  output logic                         rf_we_wb_o,
+  // TODO: Support int and fp write out
+  // output logic                         rf_we_wb_o,
   output logic [RegFileDataWidth-1:0]  rf_wdata_wb_ecc_o,
   input  logic [RegFileDataWidth-1:0]  rf_rdata_a_ecc_i,
   input  logic [RegFileDataWidth-1:0]  rf_rdata_b_ecc_i,
+
+  input  logic [31:0]                  fpu_rf_rdata_a_i,
+  input  logic [31:0]                  fpu_rf_rdata_b_i,
+  input  logic [31:0]                  fpu_rf_rdata_c_i,
+  output logic                         rf_we_int_wb_o,
+  output logic                         rf_we_fp_wb_o,
+
+  // output logic [4:0]                   rf_raddr_c_o,
+  // input  logic [RegFileDataWidth-1:0]  rf_rdata_c_ecc_i,
+
 
   // RAMs interface
   output logic [IC_NUM_WAYS-1:0]       ic_tag_req_o,
@@ -223,23 +234,38 @@ module ibex_core import ibex_pkg::*; #(
   logic [31:0] rf_rdata_a;
   logic [4:0]  rf_raddr_b;
   logic [31:0] rf_rdata_b;
+  logic [4:0]  rf_raddr_c; 
   logic        rf_ren_a;
   logic        rf_ren_b;
+
+  // logic [4:0]  rf_raddr_c;
+  // logic [31:0] rf_rdata_c;
+  logic        rf_sel_fp_a;
+  logic        rf_sel_fp_b;
+  logic        rf_lsu_to_fp;
+
+  // logic        rf_we_id;
+  
+  logic        rf_we_int_id;
+  logic        rf_we_fp_id;
+  
   logic [4:0]  rf_waddr_wb;
   logic [31:0] rf_wdata_wb;
   // Writeback register write data that can be used on the forwarding path (doesn't factor in memory
   // read data as this is too late for the forwarding path)
   logic [31:0] rf_wdata_fwd_wb;
   logic [31:0] rf_wdata_lsu;
-  logic        rf_we_wb;
+  // logic        rf_we_wb;
   logic        rf_we_lsu;
   logic        rf_ecc_err_comb;
 
   logic [4:0]  rf_waddr_id;
   logic [31:0] rf_wdata_id;
-  logic        rf_we_id;
   logic        rf_rd_a_wb_match;
   logic        rf_rd_b_wb_match;
+
+  logic        rf_we_int_wb;
+  logic        rf_we_fp_wb;
 
   // ALU Control
   alu_op_e     alu_operator_ex;
@@ -262,6 +288,11 @@ module ibex_core import ibex_pkg::*; #(
   logic [31:0] multdiv_operand_a_ex;
   logic [31:0] multdiv_operand_b_ex;
   logic        multdiv_ready_id;
+
+  //FPU Control
+  logic [2:0]           fpu_rounding_mode;
+  fpu_op_e              fpu_opcode;
+  logic [31:0]          fpu_integer_operand;
 
   // CSR control
   logic        csr_access;
@@ -623,11 +654,27 @@ module ibex_core import ibex_pkg::*; #(
     .rf_rdata_b_i      (rf_rdata_b),
     .rf_ren_a_o        (rf_ren_a),
     .rf_ren_b_o        (rf_ren_b),
+
+    .rf_raddr_c_o       (rf_raddr_c),
+    // .rf_raddr_c_o       (rf_raddr_c),
+    // .rf_rdata_c_i       (),
+    // .rf_rdata_c_i       (rd_rdata_c),
+    // .rf_ren_c_o         (rf_ren_c),
+    // .rf_sel_fp_a_o      (rf_sel_fp_a),
+    // .rf_sel_fp_b_o      (rf_sel_fp_b),
+    // .rf_lsu_to_fp_o     (rf_lsu_to_fp),
+
     .rf_waddr_id_o     (rf_waddr_id),
     .rf_wdata_id_o     (rf_wdata_id),
-    .rf_we_id_o        (rf_we_id),
+    // .rf_we_id_o        (rf_we_id),
     .rf_rd_a_wb_match_o(rf_rd_a_wb_match),
     .rf_rd_b_wb_match_o(rf_rd_b_wb_match),
+
+    .rf_we_int_id_o         (rf_we_int_id),
+    .rf_we_fp_id_o          (rf_we_fp_id),
+    .fpu_rounding_mode      (fpu_rounding_mode),
+    .fpu_integer_operand_o  (fpu_integer_operand),
+    .fpu_opcode             (fpu_opcode),
 
     .rf_waddr_wb_i    (rf_waddr_wb),
     .rf_wdata_fwd_wb_i(rf_wdata_fwd_wb),
@@ -670,6 +717,15 @@ module ibex_core import ibex_pkg::*; #(
     // Branch target ALU signal from ID stage
     .bt_a_operand_i(bt_a_operand),
     .bt_b_operand_i(bt_b_operand),
+
+    //FPU
+    .fpu_operand_a_i      (fpu_rf_rdata_a_i),
+    .fpu_operand_b_i      (fpu_rf_rdata_b_i),
+    .fpu_operand_c_i      (fpu_rf_rdata_c_i),
+    .fpu_integer_operand_i (fpu_integer_operand),
+    .fpu_opcode_i         (fpu_opcode),
+    .fpu_rounding_mode_i  (fpu_rounding_mode),
+
 
     // Multipler/Divider signal from ID stage
     .multdiv_operator_i   (multdiv_operator_ex),
@@ -779,7 +835,10 @@ module ibex_core import ibex_pkg::*; #(
 
     .rf_waddr_id_i(rf_waddr_id),
     .rf_wdata_id_i(rf_wdata_id),
-    .rf_we_id_i   (rf_we_id),
+    // .rf_we_id_i   (rf_we_id),
+    .rf_we_int_id_i   (rf_we_int_id),
+    .rf_we_fp_id_i    (rf_we_fp_id),
+    .rf_lsu_to_fp_i   (rf_lsu_to_fp),
 
     .rf_wdata_lsu_i(rf_wdata_lsu),
     .rf_we_lsu_i   (rf_we_lsu),
@@ -788,7 +847,9 @@ module ibex_core import ibex_pkg::*; #(
 
     .rf_waddr_wb_o(rf_waddr_wb),
     .rf_wdata_wb_o(rf_wdata_wb),
-    .rf_we_wb_o   (rf_we_wb),
+    // .rf_we_wb_o   (rf_we_wb),
+    .rf_we_int_wb_o   (rf_we_int_wb),
+    .rf_we_fp_wb_o   (rf_we_fp_wb),
 
     .lsu_resp_valid_i(lsu_resp_valid),
     .lsu_resp_err_i  (lsu_resp_err),
@@ -803,8 +864,11 @@ module ibex_core import ibex_pkg::*; #(
   assign dummy_instr_id_o = dummy_instr_id;
   assign rf_raddr_a_o     = rf_raddr_a;
   assign rf_waddr_wb_o    = rf_waddr_wb;
-  assign rf_we_wb_o       = rf_we_wb;
+  // assign rf_we_wb_o       = rf_we_wb;
   assign rf_raddr_b_o     = rf_raddr_b;
+
+  assign rf_we_int_wb_o      = rf_we_int_wb;
+  assign rf_we_fp_wb_o       = rf_we_fp_wb;
 
   if (RegFileECC) begin : gen_regfile_ecc
 
@@ -1519,6 +1583,7 @@ module ibex_core import ibex_pkg::*; #(
     end
   end
 
+  // No floating point integration with RVFI
   // Source registers 1 and 2 are read in the first instruction cycle
   // Source register 3 is read in the second instruction cycle.
   always_comb begin

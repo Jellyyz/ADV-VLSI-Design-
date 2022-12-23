@@ -161,10 +161,15 @@ module ibex_top import ibex_pkg::*; #(
   logic [4:0]                  rf_raddr_a;
   logic [4:0]                  rf_raddr_b;
   logic [4:0]                  rf_waddr_wb;
-  logic                        rf_we_wb;
+  // logic                        rf_we_wb;
   logic [RegFileDataWidth-1:0] rf_wdata_wb_ecc;
   logic [RegFileDataWidth-1:0] rf_rdata_a_ecc, rf_rdata_a_ecc_buf;
   logic [RegFileDataWidth-1:0] rf_rdata_b_ecc, rf_rdata_b_ecc_buf;
+
+  logic                        rf_we_int_wb, rf_we_fp_wb;
+  logic [31:0]                  fpu_rf_rdata_a;
+  logic [31:0]                  fpu_rf_rdata_b;
+  logic [31:0]                  fpu_rf_rdata_c;
 
   // Combined data and integrity for data and instruction busses
   logic [MemDataWidth-1:0]     data_wdata_core;
@@ -310,10 +315,16 @@ module ibex_top import ibex_pkg::*; #(
     .rf_raddr_a_o     (rf_raddr_a),
     .rf_raddr_b_o     (rf_raddr_b),
     .rf_waddr_wb_o    (rf_waddr_wb),
-    .rf_we_wb_o       (rf_we_wb),
+    // .rf_we_wb_o       (rf_we_wb),
     .rf_wdata_wb_ecc_o(rf_wdata_wb_ecc),
     .rf_rdata_a_ecc_i (rf_rdata_a_ecc_buf),
     .rf_rdata_b_ecc_i (rf_rdata_b_ecc_buf),
+
+    .fpu_rf_rdata_a_i (fpu_rf_rdata_a),
+    .fpu_rf_rdata_b_i (fpu_rf_rdata_b),
+    .fpu_rf_rdata_c_i (fpu_rf_rdata_c),
+    .rf_we_int_wb_o (rf_we_int_wb), 
+    .rf_we_fp_wb_o  (rf_we_fp_wb),
 
     .ic_tag_req_o      (ic_tag_req),
     .ic_tag_write_o    (ic_tag_write),
@@ -381,6 +392,25 @@ module ibex_top import ibex_pkg::*; #(
   /////////////////////////////////
   // Register file Instantiation //
   /////////////////////////////////
+  logic fpu_rf_alert_major_internal;
+    fp_register_file_ff fpu_register_file_i (
+      .clk_i (clk),
+      .rst_ni(rst_ni),
+
+      .test_en_i       (test_en_i),
+      .dummy_instr_id_i(dummy_instr_id),
+
+      .raddr_a_i(rf_raddr_a),
+      .rdata_a_o(fpu_rf_rdata_a),
+      .raddr_b_i(rf_raddr_b),
+      .rdata_b_o(fpu_rf_rdata_b),
+      .raddr_c_i(rf_raddr_b),
+      .rdata_c_o(fpu_rf_rdata_c),
+      .waddr_a_i(rf_waddr_wb),
+      .wdata_a_i(rf_wdata_wb_ecc),
+      .we_a_i   (rf_we_fp_wb),
+      .err_o    (fpu_rf_alert_major_internal)
+  );
 
   logic rf_alert_major_internal;
   if (RegFile == RegFileFF) begin : gen_regfile_ff
@@ -391,6 +421,7 @@ module ibex_top import ibex_pkg::*; #(
       // SEC_CM: DATA_REG_SW.GLITCH_DETECT
       .WrenCheck        (RegFileWrenCheck),
       .WordZeroVal      (RegFileDataWidth'(prim_secded_pkg::SecdedInv3932ZeroWord))
+      // .WordZeroVal      (32'hdeadbeef)
     ) register_file_i (
       .clk_i (clk),
       .rst_ni(rst_ni),
@@ -404,7 +435,8 @@ module ibex_top import ibex_pkg::*; #(
       .rdata_b_o(rf_rdata_b_ecc),
       .waddr_a_i(rf_waddr_wb),
       .wdata_a_i(rf_wdata_wb_ecc),
-      .we_a_i   (rf_we_wb),
+      // .we_a_i   (rf_we_wb),
+      .we_a_i   (rf_we_int_wb),
       .err_o    (rf_alert_major_internal)
     );
   end else if (RegFile == RegFileFPGA) begin : gen_regfile_fpga
@@ -428,7 +460,8 @@ module ibex_top import ibex_pkg::*; #(
       .rdata_b_o(rf_rdata_b_ecc),
       .waddr_a_i(rf_waddr_wb),
       .wdata_a_i(rf_wdata_wb_ecc),
-      .we_a_i   (rf_we_wb),
+      // .we_a_i   (rf_we_wb),
+      .we_a_i   (rf_we_int_wb),
       .err_o    (rf_alert_major_internal)
     );
   end else if (RegFile == RegFileLatch) begin : gen_regfile_latch
@@ -452,7 +485,8 @@ module ibex_top import ibex_pkg::*; #(
       .rdata_b_o(rf_rdata_b_ecc),
       .waddr_a_i(rf_waddr_wb),
       .wdata_a_i(rf_wdata_wb_ecc),
-      .we_a_i   (rf_we_wb),
+      // .we_a_i   (rf_we_wb),
+      .we_a_i   (rf_we_int_wb),
       .err_o    (rf_alert_major_internal)
     );
   end
@@ -514,33 +548,8 @@ module ibex_top import ibex_pkg::*; #(
   // Rams Instantiation //
   ////////////////////////
 
-  logic [8:0] icache_tag_addr;
- 
-
   if (ICache) begin : gen_rams
 
-    // // icache data storage 
-    // icache_data icache_data(
-    //   .CLK(clk_i), .Q(), 
-    //   .CEN(), .WEN(), 
-    //   .A(), .D(), 
-    //   .EMA(), .GWEN(), 
-    //   .RETN(),
-
-    //   .Q()
-    // );
-    
-    // // icache tag storage 
-    // icache_tag icache_tag(
-    //   .CLK(clk_i), .Q({ic_tag_rdata[0], ic_tag_rdata[1]}), 
-    //   .CEN(ic_tag_req[0] | ic_tag_req[1]), .WEN(ic_tag_write), 
-    //   .A(ic_tag_addr), .D(ic_tag_wdata), 
-    //   .EMA(), .GWEN(), 
-    //   .RETN(),
-
-    //   .Q()
-    // );
-    
     for (genvar way = 0; way < IC_NUM_WAYS; way++) begin : gen_rams_inner
 
       if (ICacheScramble) begin : gen_scramble_rams
@@ -616,7 +625,6 @@ module ibex_top import ibex_pkg::*; #(
       end else begin : gen_noscramble_rams
 
         // Tag RAM instantiation
-
         prim_ram_1p #(
           .Width            (TagSizeECC),
           .Depth            (IC_NUM_LINES),
@@ -716,7 +724,8 @@ module ibex_top import ibex_pkg::*; #(
       rf_raddr_a,
       rf_raddr_b,
       rf_waddr_wb,
-      rf_we_wb,
+      // rf_we_wb,
+      rf_we_int_wb, // Should not be relevant to our flows
       rf_wdata_wb_ecc,
       rf_rdata_a_ecc,
       rf_rdata_b_ecc,
@@ -821,7 +830,8 @@ module ibex_top import ibex_pkg::*; #(
       rf_raddr_a,
       rf_raddr_b,
       rf_waddr_wb,
-      rf_we_wb,
+      // rf_we_wb,
+      rf_we_int_wb, // Should not be relevant to our flow
       rf_wdata_wb_ecc,
       rf_rdata_a_ecc,
       rf_rdata_b_ecc,
@@ -1039,7 +1049,8 @@ module ibex_top import ibex_pkg::*; #(
 
   assign alert_major_internal_o = core_alert_major_internal |
                                   lockstep_alert_major_internal |
-                                  rf_alert_major_internal;
+                                  rf_alert_major_internal |
+                                  fpu_rf_alert_major_internal;
   assign alert_major_bus_o      = core_alert_major_bus | lockstep_alert_major_bus;
   assign alert_minor_o          = core_alert_minor | lockstep_alert_minor;
 

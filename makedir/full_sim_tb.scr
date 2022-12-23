@@ -3,7 +3,10 @@
 +incdir+../hdl/ibex_core/rtl
 +incdir+../hdl/ibex_core/
 +incdir+../hdl/Memory/
++incdir+../hdl/dw_dependancies
++incdir+../hdl/FPU
 
+../hdl/FPU/ibex_fp_package.sv
 ../hdl/ibex_core/package/ibex_pkg.sv
 
 
@@ -75,6 +78,30 @@
 ../hdl/ibex_core/rtl/prim/prim_flop.sv
 ../hdl/ibex_core/rtl/prim/prim_badbit_ram_1p.sv
 ../hdl/ibex_core/rtl/prim/prim_ram_1p.sv
+
+../hdl/dw_dependancies/DW_sqrt_function.inc
+../hdl/dw_dependancies/DW_fp.v
+../hdl/dw_dependancies/DW_fp_addsub_DG.v
+../hdl/dw_dependancies/DW_fp_addsub.v
+../hdl/dw_dependancies/DW_fp_cmp_DG.v
+../hdl/dw_dependancies/DW_fp_cmp.v
+../hdl/dw_dependancies/DW_fp_div_DG.v
+../hdl/dw_dependancies/DW_fp_div.v
+../hdl/dw_dependancies/DW_fp_flt2i.v
+../hdl/dw_dependancies/DW_fp_i2flt.v
+../hdl/dw_dependancies/DW_fp_ifp_conv.v
+../hdl/dw_dependancies/DW_fp_dp2.v
+../hdl/dw_dependancies/DW_fp_mac.v
+../hdl/dw_dependancies/DW_fp_mac_DG.v
+../hdl/dw_dependancies/DW_fp_mult_DG.v
+../hdl/dw_dependancies/DW_fp_mult.v
+../hdl/dw_dependancies/DW_fp_sqrt_inst.v
+../hdl/dw_dependancies/DW_fp_sqrt.v
+
+../hdl/FPU/FPU_classifier.sv
+../hdl/FPU/fp_decoder.sv
+../hdl/FPU/FPU.sv
+
 ../hdl/ibex_core/rtl/ibex_alu.sv
 ../hdl/ibex_core/rtl/ibex_branch_predict.sv
 ../hdl/ibex_core/rtl/ibex_compressed_decoder.sv
@@ -82,19 +109,19 @@
 ../hdl/ibex_core/rtl/ibex_cs_registers.sv
 ../hdl/ibex_core/rtl/ibex_csr.sv
 ../hdl/ibex_core/rtl/ibex_counter.sv
-../hdl/ibex_core/rtl/ibex_decoder.sv
+../hdl/ibex_core/rtl/ibex_decoder_zx.sv
 ../hdl/ibex_core/rtl/ibex_ex_block.sv
 ../hdl/ibex_core/rtl/ibex_fetch_fifo.sv
-../hdl/ibex_core/rtl/ibex_id_stage.sv
+../hdl/ibex_core/rtl/ibex_id_stage_zx.sv
 ../hdl/ibex_core/rtl/ibex_if_stage.sv
 ../hdl/ibex_core/rtl/ibex_load_store_unit.sv
 ../hdl/ibex_core/rtl/ibex_multdiv_fast.sv
 ../hdl/ibex_core/rtl/ibex_multdiv_slow.sv
 ../hdl/ibex_core/rtl/ibex_prefetch_buffer.sv
 ../hdl/ibex_core/rtl/ibex_pmp.sv
-../hdl/ibex_core/rtl/ibex_wb_stage.sv
+../hdl/ibex_core/rtl/ibex_wb_stage_zx.sv
 ../hdl/ibex_core/rtl/ibex_dummy_instr.sv
-../hdl/ibex_core/rtl/ibex_core.sv
+../hdl/ibex_core/rtl/ibex_core_zx.sv
 ../hdl/ibex_core/rtl/ram_1p.sv
 ../hdl/ibex_core/rtl/ram_2p.sv
 ../hdl/ibex_core/rtl/bus.sv
@@ -102,9 +129,10 @@
 ../hdl/ibex_core/rtl/prim/prim_ram_1p_adv.sv
 ../hdl/ibex_core/rtl/prim/prim_ram_1p_scr.sv
 ../hdl/ibex_core/rtl/ibex_register_file_ff.sv
+../hdl/ibex_core/rtl/ibex_fp_regfile_ff.sv
 ../hdl/ibex_core/rtl/ibex_register_file_latch.sv
 ../hdl/ibex_core/rtl/ibex_lockstep.sv
-../hdl/ibex_core/rtl/ibex_top.sv
+../hdl/ibex_core/rtl/ibex_top_zx.sv
 
 
 ../hvl/magic_mem_sim/tb_itf.sv

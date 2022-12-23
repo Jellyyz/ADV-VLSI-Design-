@@ -15,21 +15,19 @@ module ibex_FPU(
     input   logic [31:0]    rs2_i,
     // Third operand for floating point operation
     input   logic [31:0]    rs3_i,
-    // Address of register to write result to
-    input   logic [4:0]     rd_addr_i,
     // Result of floating point operation to be written to floating point register file
-    output  logic [31:0]    fp_regfile_wdata_o,
+    output  logic [31:0]    fp_regfile_wdata_o
     // Address of register in floating point register file to write result to
-    output  logic [4:0]     fp_regfile_addr_o,
-    // Write enable signal for floating point register file
-    output   logic          fp_regfile_write_o,
-    // Result of floating point operation to be written to integer register file
-    output  logic [31:0]    int_regfile_wdata_o,
-    // Address of register in integer register file to write result to
-    output  logic [4:0]     int_regfile_addr_o,
-    // Write enable signal for integer register file
-    output   logic          int_regfile_write_o
 );
+
+
+//TODO: See if DW takes in different rounding modes than RISC-V 
+logic [31:0]    int_regfile_wdata;
+logic [31:0]    fp_regfile_wdata;
+logic [2:0]     fp_rounding_mode_dummy;
+assign fp_rounding_mode_dummy = 3'b000;
+
+assign fp_regfile_wdata_o = fp_regfile_wdata|int_regfile_wdata;
 
 // Intermediate signals and status flags for square root operation
 logic [31:0] sqrt_op_a;
@@ -108,12 +106,8 @@ assign int2fp_op_a  = rs1_int_i;
 //default functions
 
 function void set_defaults();
-    fp_regfile_wdata_o      = 32'b0;
-    fp_regfile_addr_o       = rd_addr_i;
-    fp_regfile_write_o      = 1'b0;
-    int_regfile_wdata_o     = 32'b0;
-    int_regfile_addr_o      = rd_addr_i;
-    int_regfile_write_o     = 1'b0;
+    fp_regfile_wdata      = 32'b0;
+    int_regfile_wdata     = 32'b0;
     add_sub_select          = 1'b0;
     mac_op_c                = rs3_i;
 endfunction
@@ -124,130 +118,106 @@ always_comb begin
     case(fp_op)
 
         FPU_ADD: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = add_sub_result;
+            fp_regfile_wdata      = add_sub_result;
         end
 
         FPU_SUB: begin
-            fp_regfile_write_o      = 1'b1;
             add_sub_select          = 1'b1;
-            fp_regfile_wdata_o      = add_sub_result;
+            fp_regfile_wdata      = add_sub_result;
         end
 
         FPU_MUL: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = mult_result;
+            fp_regfile_wdata      = mult_result;
         end
 
         FPU_DIV: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = div_result;
+            fp_regfile_wdata      = div_result;
         end
 
         FPU_SQRT: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = sqrt_result;
+            fp_regfile_wdata      = sqrt_result;
         end
  
         FPU_MIN: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = min_of_rs1_rs2;
+            fp_regfile_wdata      = min_of_rs1_rs2;
         end
 
         FPU_MAX: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = max_of_rs1_rs2;
+            fp_regfile_wdata      = max_of_rs1_rs2;
         end
 
     
         FPU_MADD: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = mac_result;
+            fp_regfile_wdata      = mac_result;
         end
 
         FPU_NMADD: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {~mac_result[31], mac_result[30:0]};
+            fp_regfile_wdata      = {~mac_result[31], mac_result[30:0]};
         end
 
         FPU_MSUB: begin
-            fp_regfile_write_o      = 1'b1;
             mac_op_c                = {~rs3_i[31], rs3_i[30:0]};
-            fp_regfile_wdata_o      = mac_result;
+            fp_regfile_wdata      = mac_result;
         end
 
         FPU_NMSUB: begin
-            fp_regfile_write_o      = 1'b1;
             mac_op_c                = {~rs3_i[31], rs3_i[30:0]};
-            fp_regfile_wdata_o      = {~mac_result[31], mac_result[30:0]};
+            fp_regfile_wdata      = {~mac_result[31], mac_result[30:0]};
         end
 
     
         FPU_INT2FLOAT: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = int2fp_result;
+            fp_regfile_wdata      = int2fp_result;
         end
 
         FPU_FLOAT2INT: begin
-            int_regfile_write_o     = 1'b1;
-            int_regfile_wdata_o     = fp2int_result;
+            int_regfile_wdata     = fp2int_result;
         end
 
 
         FPU_INT2FLOAT_U: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = int2fp_result_unsigned;
+            fp_regfile_wdata      = int2fp_result_unsigned;
         end
 
         //TODO: Figure out what the best way to do unsigned flt2int conversion - or not do it at all lol
         FPU_FLOAT2INT_U: begin
-            int_regfile_write_o     = 1'b1;
-            int_regfile_wdata_o     = fp2int_result;
+            int_regfile_wdata     = fp2int_result;
         end
     
         FPU_SGNJ: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {rs2_i[31], rs1_i[30:0]};
+            fp_regfile_wdata      = {rs2_i[31], rs1_i[30:0]};
         end
 
         FPU_SGNJ_N: begin//negated sign-injection
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {~rs2_i[31], rs1_i[30:0]};
+            fp_regfile_wdata      = {~rs2_i[31], rs1_i[30:0]};
         end 
         
         FPU_SGNJ_X: begin//xor sign-injection
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = {rs2_i[31]^rs1_i[31], rs1_i[30:0]};
+            fp_regfile_wdata      = {rs2_i[31]^rs1_i[31], rs1_i[30:0]};
         end
 
         FPU_MOVE_INT2FLOAT: begin
-            fp_regfile_write_o      = 1'b1;
-            fp_regfile_wdata_o      = rs1_int_i;
+            fp_regfile_wdata      = rs1_int_i;
         end 
 
         FPU_MOVE_FLOAT2INT: begin
-            int_regfile_write_o     = 1'b1;
-            int_regfile_wdata_o     = rs1_i;
+            int_regfile_wdata     = rs1_i;
         end
 
         FPU_CMP_EQ: begin
-            int_regfile_write_o      = 1'b1;
-            int_regfile_wdata_o      = {31'h0, fp_cmp_rs1_eq_rs2};
+            int_regfile_wdata      = {31'h0, fp_cmp_rs1_eq_rs2};
         end
 
         FPU_CMP_LT: begin
-            int_regfile_write_o      = 1'b1;
-            int_regfile_wdata_o      = {31'h0, fp_cmp_rs1_lt_rs2};
+            int_regfile_wdata      = {31'h0, fp_cmp_rs1_lt_rs2};
         end
 
         FPU_CMP_LE: begin
-            int_regfile_write_o      = 1'b1;
-            int_regfile_wdata_o = {31'h0, fp_cmp_rs1_lt_rs2|fp_cmp_rs1_eq_rs2};
+            int_regfile_wdata = {31'h0, fp_cmp_rs1_lt_rs2|fp_cmp_rs1_eq_rs2};
         end
 
         FCLASS: begin
-            int_regfile_write_o      = 1'b1;
-            int_regfile_wdata_o      = fpclass_result;
+            int_regfile_wdata      = fpclass_result;
         end
 
         FPU_NOP: begin
@@ -262,7 +232,7 @@ end
 
 DW_fp_sqrt_inst DW_fp_sqrt_inst(
     .inst_a(sqrt_op_a), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .z_inst(sqrt_result), 
     .status_inst(sqrt_status)
 ); 
@@ -270,7 +240,7 @@ DW_fp_sqrt_inst DW_fp_sqrt_inst(
 DW_fp_addsub_inst DW_fp_addsub_inst(
     .inst_a(add_sub_op_a),
     .inst_b(add_sub_op_b), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .inst_op(add_sub_select),
     .z_inst(add_sub_result),
     .status_inst(add_sub_status)
@@ -291,7 +261,7 @@ DW_fp_cmp_inst DW_fp_cmp_inst(
 DW_fp_mult_inst DW_fp_mult_inst(
     .inst_a(mult_op_a), 
     .inst_b(mult_op_b), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .z_inst(mult_result), 
     .status_inst(mult_status)
 ); 
@@ -299,21 +269,21 @@ DW_fp_mult_inst DW_fp_mult_inst(
 DW_fp_div_inst DW_fp_div_inst(
     .inst_a(div_op_a), 
     .inst_b(div_op_b), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .z_inst(div_result), 
     .status_inst(div_status)
 ); 
 
 DW_fp_flt2i_inst DW_fp_flt2i_inst(
     .inst_a(fp2int_op_a), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .z_inst(fp2int_result), 
     .status_inst(fp2int_status)
 );
 
 DW_fp_i2flt_inst DW_fp_i2flt_inst(
     .inst_a(int2fp_op_a), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .z_inst(int2fp_result), 
     .status_inst(int2fp_status)
 ); 
@@ -322,7 +292,7 @@ DW_fp_i2flt_inst #(
     .isign(1'b0)
 ) DW_fp_i2flt_inst_unsigned(
     .inst_a(int2fp_op_a), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .z_inst(int2fp_result_unsigned), 
     .status_inst(int2fp_status_unsigned)
 );
@@ -331,7 +301,7 @@ DW_fp_mac_inst DW_fp_mac_inst(
     .inst_a(mac_op_a), 
     .inst_b(mac_op_b), 
     .inst_c(mac_op_c), 
-    .inst_rnd(fp_rounding_mode), 
+    .inst_rnd(fp_rounding_mode_dummy), 
     .z_inst(mac_result), 
     .status_inst(mac_status)
 );

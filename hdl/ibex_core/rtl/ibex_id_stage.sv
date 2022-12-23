@@ -132,7 +132,7 @@ module ibex_id_stage #(
   input  logic                      lsu_load_err_i,
   input  logic                      lsu_store_err_i,
   input  logic                      lsu_load_intg_err_i,
-
+  
   // Debug Signal
   output logic                      debug_mode_o,
   output ibex_pkg::dbg_cause_e      debug_cause_o,
@@ -155,12 +155,27 @@ module ibex_id_stage #(
   output logic                      rf_ren_a_o,
   output logic                      rf_ren_b_o,
 
+  // New
+  output logic [4:0]                rf_raddr_c_o,
+  //output logic                      rf_sel_fp_a_o,
+  //output logic                      rf_sel_fp_b_o,
+  //output logic                      rf_lsu_to_fp_o,
+
   // Register file write (via writeback)
   output logic [4:0]                rf_waddr_id_o,
   output logic [31:0]               rf_wdata_id_o,
-  output logic                      rf_we_id_o,
+  // output logic                      rf_we_id_o,
   output logic                      rf_rd_a_wb_match_o,
   output logic                      rf_rd_b_wb_match_o,
+
+  // New
+  output logic                      rf_we_int_id_o,
+  output logic                      rf_we_fp_id_o,
+  output logic [2:0]                fpu_rounding_mode,
+  output logic [31:0]               fpu_integer_operand_o,
+  output fpu_op_e                   fpu_opcode,
+  // TODO: See if forwarding is totally unnecessary for rs3
+  // Also ensure forwarding logic for ints do not break fp computation
 
   // Register write information from writeback (for resolving data hazards)
   input  logic [4:0]                rf_waddr_wb_i,
@@ -186,6 +201,7 @@ module ibex_id_stage #(
 );
 
   import ibex_pkg::*;
+  import ibex_fp_pkg::*;
 
   // Decoder/Controller, ID stage internal signals
   logic        illegal_insn_dec;
@@ -238,9 +254,14 @@ module ibex_id_stage #(
   // Register file interface
 
   rf_wd_sel_e  rf_wdata_sel;
-  logic        rf_we_dec, rf_we_raw;
+  // logic        rf_we_dec, rf_we_raw;
   logic        rf_ren_a, rf_ren_b;
   logic        rf_ren_a_dec, rf_ren_b_dec;
+
+  // New
+  logic         rf_we_int_dec, rf_we_int_raw;
+  logic         rf_we_fp_dec, rf_we_fp_dec_raw; 
+  // Only useful for FP computational instuctions
 
   // Read enables should only be asserted for valid and legal instructions
   assign rf_ren_a = instr_valid_i & ~instr_fetch_err_i & ~illegal_insn_o & rf_ren_a_dec;
@@ -387,6 +408,8 @@ module ibex_id_stage #(
   // ALU MUX for Operand B
   assign alu_operand_b = (alu_op_b_mux_sel == OP_B_IMM) ? imm_b : rf_rdata_b_fwd;
 
+  //FPU Integer operand
+  assign fpu_integer_operand_o = rf_rdata_a_i;
   /////////////////////////////////////////
   // Multicycle Operation Stage Register //
   /////////////////////////////////////////
@@ -408,7 +431,9 @@ module ibex_id_stage #(
   ///////////////////////
 
   // Suppress register write if there is an illegal CSR access or instruction is not executing
-  assign rf_we_id_o = rf_we_raw & instr_executing & ~illegal_csr_insn_i;
+  // assign rf_we_id_o = rf_we_raw & instr_executing & ~illegal_csr_insn_i;
+  assign rf_we_int_id_o = rf_we_int_raw & instr_executing & ~illegal_csr_insn_i;
+  assign rf_we_fp_id_o = rf_we_fp_dec_raw & instr_executing & ~illegal_csr_insn_i;
 
   // Register file write data mux
   always_comb begin : rf_wdata_id_mux
@@ -464,13 +489,24 @@ module ibex_id_stage #(
 
     // register file
     .rf_wdata_sel_o(rf_wdata_sel),
-    .rf_we_o       (rf_we_dec),
+    // .rf_we_o       (rf_we_dec),
 
     .rf_raddr_a_o(rf_raddr_a_o),
     .rf_raddr_b_o(rf_raddr_b_o),
     .rf_waddr_o  (rf_waddr_id_o),
     .rf_ren_a_o  (rf_ren_a_dec),
     .rf_ren_b_o  (rf_ren_b_dec),
+
+    // New
+    .rf_we_int_o    (rf_we_int_dec),  
+    .rf_we_fp_o     (rf_we_fp_dec),   
+    .rf_raddr_c_o   (rf_raddr_c_o),
+    .f_opcode       (fpu_opcode),
+    .fpu_rounding_mode (fpu_rounding_mode),
+    // .rf_sel_fp_a_o  (rf_sel_fp_a_o),
+    // .rf_sel_fp_b_o  (rf_sel_fp_b_o),
+    // .rf_lsu_to_fp_o (rf_lsu_to_fp_o),
+
 
     // ALU
     .alu_operator_o    (alu_operator),
@@ -780,7 +816,7 @@ module ibex_id_stage #(
 
   always_comb begin
     id_fsm_d                = id_fsm_q;
-    rf_we_raw               = rf_we_dec;
+    // rf_we_raw               = rf_we_dec;
     stall_multdiv           = 1'b0;
     stall_jump              = 1'b0;
     stall_branch            = 1'b0;
@@ -789,6 +825,9 @@ module ibex_id_stage #(
     branch_not_set          = 1'b0;
     jump_set_raw            = 1'b0;
     perf_branch_o           = 1'b0;
+
+    rf_we_int_raw           = rf_we_int_dec;
+    rf_we_fp_dec_raw        = rf_we_fp_dec;
 
     if (instr_executing_spec) begin
       unique case (id_fsm_q)
@@ -810,7 +849,8 @@ module ibex_id_stage #(
                 // When single-cycle multiply is configured mul can finish in the first cycle so
                 // only enter MULTI_CYCLE state if a result isn't immediately available
                 id_fsm_d      = MULTI_CYCLE;
-                rf_we_raw     = 1'b0;
+                // rf_we_raw     = 1'b0;
+                rf_we_int_raw     = 1'b0;
                 stall_multdiv = 1'b1;
               end
             end
@@ -840,8 +880,10 @@ module ibex_id_stage #(
             alu_multicycle_dec: begin
               stall_alu     = 1'b1;
               id_fsm_d      = MULTI_CYCLE;
-              rf_we_raw     = 1'b0;
+              // rf_we_raw     = 1'b0;
+              rf_we_int_raw     = 1'b0;
             end
+            // floating point op active mode?
             default: begin
               id_fsm_d      = FIRST_CYCLE;
             end
@@ -850,7 +892,8 @@ module ibex_id_stage #(
 
         MULTI_CYCLE: begin
           if(multdiv_en_dec) begin
-            rf_we_raw       = rf_we_dec & ex_valid_i;
+            // rf_we_raw       = rf_we_dec & ex_valid_i;
+            rf_we_int_raw       = rf_we_int_dec & ex_valid_i;
           end
 
           if (multicycle_done & ready_wb_i) begin
@@ -877,6 +920,7 @@ module ibex_id_stage #(
 
   // Stall ID/EX stage for reason that relates to instruction in ID/EX, update assertion below if
   // modifying this.
+  // TODO: Add FPU Stall logic here.
   assign stall_id = stall_ld_hz | stall_mem | stall_multdiv | stall_jump | stall_branch |
                       stall_alu;
 
@@ -990,6 +1034,7 @@ module ibex_id_stage #(
     // If instruction is read register that writeback is writing forward writeback data to read
     // data. Note this doesn't factor in load data as it arrives too late, such hazards are
     // resolved via a stall (see above).
+    // TODO: porential compilation error here to set rf signals
     assign rf_rdata_a_fwd = rf_rd_a_wb_match & rf_write_wb_i ? rf_wdata_fwd_wb_i : rf_rdata_a_i;
     assign rf_rdata_b_fwd = rf_rd_b_wb_match & rf_write_wb_i ? rf_wdata_fwd_wb_i : rf_rdata_b_i;
 
